@@ -1,0 +1,56 @@
+______ test was started.
+
+1:20 pm temp changed from -20C to -25C to overshoot and get cells to desired temperature.
+
+It seems to be obvserved that the temp sensors in cells 3, 6,7,8 are reading higher than the other cells.
+These cells had either 
+
+a.) To tight of a tolerance to fit the temp sensor far down enough to make contact with the fluids.
+
+b.) Wasn't secured properly - the component responsible for holding the temp sensor broke, and the 
+temp sensor was difficult to place correctly. 
+
+The approach to solve this is to design a small detachable retaining clip that can be easily removed 
+and added as needed. The clip should be attached firmly to the temp sensor, and remain attached 
+when the clip is removed from the testing apparatus. 
+The clip can work with the current design and offers a better overal solution 
+and reduction in sensor assembly time. Since this part of the design is prone to fail due to tight 
+tolerances and little material to work with. Once snapped off, the unit has to be reprinted. 
+
+At 1:27 PM the temp reached the initial target of 20C. Cells 1,2,4 and 5 are showing this target temp. 
+
+Either the sensors can be force fitted into the slots (Not ideal over time). 
+Goal is to design and print clip.
+
+Over shooting by 5 to 7.5 degrees and backing down (to about 2 to 2.5 degrees above the target temp) 
+when the sensors are about 2 to 2.5 degrees above the overshoot target. 
+leads to the ideal temperature. 
+
+Summary:
+
+Set Chamber to 5-7.5 degrees over target temperature
+Wait till sensors read 2/2.5 degrees above target temperature
+Set adjusted target temperature to 2/2.5 degrees above target temperature
+
+Take measurement.
+
+example:
+Target temp: 25:
+Adjust temp: 25 + 2.5 = 27.5
+Overshoot temp: 25 + 7.5 = 32.5
+
+
+Internal Notes
+Currently, only observing cells 1,2,4,5 as cells 3,6,7,8 are suspected of faulty placement. 
+
+When these cells reach 27.5 degrees, the chamber will be set to 27.5 degrees to maintain temp
+at 25c within the cell.
+
+Overshooting the temperature of the cells is required if "flash" cooling as the chamber will
+turn on its heating element when backing down to the target temperature. This is why we 
+wait for the cells to get to 2.5 degrees above target, and then set the temperature back 
+down to target. 
+
+We also adjust the target as the lowest reading cells (from the working) are observed 
+to be about 2 degrees lower than the rest. By adjusting the target temperature by 
+2 to 2.5 degrees we can bring all the cells to be within 1 degrees of the target temperature.
