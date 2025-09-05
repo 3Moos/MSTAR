@@ -1,5 +1,6 @@
 # TODO
 *update readme*
+*do we add logs?*
 
 ## MSTAR
 *college of the desert / nasa thingy*
