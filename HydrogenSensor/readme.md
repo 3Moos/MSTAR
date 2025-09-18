@@ -5,8 +5,15 @@ finish david "jack" jackson's code for the nitrogen sensor integration
 - ~~additionally, data needs to be written to terminal~~
 
 <br>
-*name of sensor goes here*
-*name of compatible pcb goes here*
-
+**name of sensor >> ** *MCP3221*
 <br>
-**THE PDFS ARE THE DOCUMENTATION, IT ISNT VERY GOOD**
+*the MCP3221 sensor reads* ** ONLY VOLTAGE**
+<br><br>
+**name of pcb >> ** *SS PCB*
+<br><br>
+
+
+**THE PDFS ARE THE DOCUMENTATION, check the answer to FAQ #9 for the best info**
+<br>
+*there was also a pdf with the order information, but that is useless*
+
