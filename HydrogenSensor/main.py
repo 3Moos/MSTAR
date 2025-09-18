@@ -9,6 +9,7 @@ import adafruit_requests
 import os
 import json
 from config import config
+import csv
 
 # define the pins for the respective voltage sensors
 pin = analogio.AnalogIn(A0)
@@ -31,24 +32,35 @@ pin2 = analogio.AnalogIn(A1)
 def voltage_to_ppm(voltage, inMin = 0.0, inMax = 3.3, outMin = 0.0, outMax = 20000.0):
   return outMin + (float(voltage - inMin) / float(inMax - inMin) * (outMax - outMin))
 
-# set to run indefinitely, will likelly be changed in the future to account for the experiment needing to end 
-while True:
+# set to run indefinitely
+# if program is terminated, the file will be safely closed
+# the with open file thing does not work as a while loop, and as such, needs to be nested 
+with open("data.csv", "w", newline="") as csvFile:
 
-    # gets the voltage from that pin in order to calculate the ppm later on
-    voltage = pin.value
-    voltage2 = pin2.value
+    while (True):
 
-    # takes the voltages and through the formnula above, generates a ppm
-    ppm = voltage_to_ppm(voltage)
-    ppm2 = voltage_to_ppm(voltage2)
+        writer = csv.writer(csvFile, delimeter = ",")
 
-    # ~ 1
-    # the ranges of the outputs should match those of the voltage_to_ppm function as seen above
-    # for debugging purposes of course, though i am not sure of setting the ranges will cause problems later
-    # ~ 2
-    # btw, the f string formatting is just so it only shows up to a certain amount of decimals, in this case two
-    print(f"DAC reading: {voltage}, PPM Conversion: {ppm:,.2f}")
-    print(f"DAC2 Voltage: {voltage2}, PPM Conversion: {ppm2:,.2f}\n")
+        # gets the voltage from that pin in order to calculate the ppm later on
+        voltage = pin.value
+        voltage2 = pin2.value
 
-    sleep(1)
+        # takes the voltages and through the formnula above, generates a ppm
+        ppm = voltage_to_ppm(voltage)
+        ppm2 = voltage_to_ppm(voltage2)
+
+        # ~ 1
+        # the ranges of the outputs should match those of the voltage_to_ppm function as seen above
+        # for debugging purposes of course, though i am not sure of setting the ranges will cause problems later
+        # ~ 2
+        # btw, the f string formatting is just so it only shows up to a certain amount of decimals, in this case two
+        print(f"DAC reading: {voltage}, PPM Conversion: {ppm:,.2f}")
+        print(f"DAC2 Voltage: {voltage2}, PPM Conversion: {ppm2:,.2f}\n")
+
+        # fullOutput is all of the data in csv form
+        # the writer line just writes it to the csv
+        fullOutput = string(voltage) + "," string(voltage2) + "," + string(ppm) + "," + string(ppm2)
+        writer.writerow(fullOutput)
+
+        sleep(1)
 
