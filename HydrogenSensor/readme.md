@@ -6,3 +6,7 @@ finish david "jack" jackson's code for the nitrogen sensor integration
 
 <br>
 *name of sensor goes here*
+*name of compatible pcb goes here*
+
+<br>
+**THE PDFS ARE THE DOCUMENTATION, IT ISNT VERY GOOD**
