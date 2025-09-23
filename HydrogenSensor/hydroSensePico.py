@@ -1,5 +1,3 @@
-# TODO - add csv writing
-
 import analogio
 from board import *
 from time import sleep
