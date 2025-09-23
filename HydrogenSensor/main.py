@@ -18,9 +18,9 @@ pin2 = analogio.AnalogIn(A1)
 # the voltage is the value that we get from the MCP3221
 # it is a highly precise voltage reading
 # ~ 2
-# the "in" variables are the range of the voltage that is supplied from the microcontroller
-# in the case of the raspberry pi pico, the output voltage is 3.3
-# therefore, the range is [0, 3.3]
+# the "in" variables are the range of the DAC readouts
+# [0, 65535]
+# DAC -> Digital to Audio Converter (Most Assumably)
 # ~ 3
 # the "out" variables are from the range in the ppm values
 # this range is determined when calibrating the sensor
@@ -28,7 +28,7 @@ pin2 = analogio.AnalogIn(A1)
 # at the lowest voltage 0.02 ~ 0, the ppm read is 0
 # for our purposes, it is set at [0, 20000]
 # recalibration may be necessary, as the documentation does not have a value remotely close to this
-def voltage_to_ppm(voltage, inMin = 0.0, inMax = 3.3, outMin = 0.0, outMax = 20000.0):
+def voltage_to_ppm(voltage, inMin = 0.0, inMax = 65535, outMin = 0.0, outMax = 20000.0):
   return outMin + (float(voltage - inMin) / float(inMax - inMin) * (outMax - outMin))
 
 # set to run indefinitely, will likelly be changed in the future to account for the experiment needing to end 
