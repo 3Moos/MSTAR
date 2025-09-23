@@ -14,6 +14,7 @@ from config import config
 pin = analogio.AnalogIn(A0)
 pin2 = analogio.AnalogIn(A1)
 
+# OUTDATED / DEPRECATED
 # ~ 1
 # the voltage is the value that we get from the MCP3221
 # it is a highly precise voltage reading
@@ -28,8 +29,15 @@ pin2 = analogio.AnalogIn(A1)
 # at the lowest voltage 0.02 ~ 0, the ppm read is 0
 # for our purposes, it is set at [0, 20000]
 # recalibration may be necessary, as the documentation does not have a value remotely close to this
-def voltage_to_ppm(voltage, inMin = 0.0, inMax = 65535, outMin = 0.0, outMax = 20000.0):
-  return outMin + (float(voltage - inMin) / float(inMax - inMin) * (outMax - outMin))
+# def voltage_to_ppm(voltage, inMin = 0.0, inMax = 65535, outMin = 0.0, outMax = 20000.0):
+#  return outMin + (float(voltage - inMin) / float(inMax - inMin) * (outMax - outMin))
+
+# ADD PROPER DOCUMENTATION
+# voltage is the DAC VALUE readout from the sensor
+# inmax is 2^16 and is our resolution for the DAC
+# outmax is the reference voltage, 3.3 V from pico
+def voltage_to_ppm(voltage, inMin = 0.0, inMax = 65535, outMin = 0.0, outMax = 3.3):
+  return outMin + (float(voltage - inMin) / float(inMax - inMin)) * (outMax - outMin)
 
 # set to run indefinitely, will likelly be changed in the future to account for the experiment needing to end 
 while True:
