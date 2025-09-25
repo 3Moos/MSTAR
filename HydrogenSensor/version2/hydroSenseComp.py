@@ -45,8 +45,11 @@ def beginWrite(pico = None, file = None):
     current_time_stamp = datetime.datetime.now()
     # if either pico or file arent present, the code doesnt run to ensure that no errors o>
     if pico is not None and file is not None:
-        print(current_time_stamp,  pico.readline().decode("utf-8").strip())
-        file.write(str(pico.readline().decode("utf-8").strip()) + "\n")
+
+        # added current time stamp, and only referencing pico once rather than twice to reduce error
+        fullString = current_time_stamp + str(pico.readline().decode("utf-8").strip())
+        print(fullString)
+        file.write(fullString + "\n")
 
         # to reduce risk of program crashing and losing data
         # force writes data to drive without closing the file entirely
