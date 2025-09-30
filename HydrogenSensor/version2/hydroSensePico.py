@@ -44,7 +44,7 @@ while True:
     converted_ppm2 = 1.0 / (float(voltage2) / float(ppm_multiplier))
     
     # btw, the f string formatting is just so it only shows up to a certain amount of decimals, in this case two
-    print(f"Index: {reading_index}, DAC reading: {voltage}, Voltage Conversion: {ppm:,.2f}, DAC2 reading: {voltage2}, Voltage2 Conversion: {ppm2:,.2f}, PPM Conversion: {converted_ppm:,.2f}, PPM2 Conversion: {converted_ppm2:,.2f}")
+    # print(f"Index: {reading_index}, DAC reading: {voltage}, Voltage Conversion: {ppm:,.2f}, DAC2 reading: {voltage2}, Voltage2 Conversion: {ppm2:,.2f}, PPM Conversion: {converted_ppm:,.2f}, PPM2 Conversion: {converted_ppm2:,.2f}")
     # no offense to jack, but it makes sense to format the data in csv format for the csv file
     # we can adjust things to be more visually appealing on the computer side of things
     # also, the time at reading will be inserted on the computer side of things, as the pico does not have RTC
