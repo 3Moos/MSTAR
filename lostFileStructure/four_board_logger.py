@@ -139,7 +139,7 @@ while True:
             # Write the timestamp and the line to the CSV file
             #timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             
-            data = power_line2.split(",")
+            data = power_line1.split(",")
             data.insert(0, timestamp)
             csvwriter.writerow(data)
         
