@@ -148,8 +148,25 @@ df_t2.to_csv(f"{experiment_name}_temps_averaged_by_time_{timestamp}.csv", index=
 
 #power_data_p1 = df_p1[(df_p1['Cell 1 Voltage'] > -5)] 
 #power_data_p2 = df_p2[(df_p2['Cell 11 Voltage'] > -5)]  
-power_data_p1 = df_p1[df_p1[[col for col in df_p1.columns if "Voltage" in col]].ge(5).all(axis=1)]
-power_data_p2 = df_p2[df_p2[[col for col in df_p2.columns if "Voltage" in col]].ge(5).all(axis=1)]
+#temp#power_data_p1 = df_p1[df_p1[[col for col in df_p1.columns if "Voltage" in col]].ge(5).all(axis=1)]
+#temp#power_data_p2 = df_p2[df_p2[[col for col in df_p2.columns if "Voltage" in col]].ge(5).all(axis=1)]
+
+#temp
+
+# If df_p1 is blank, keep it as-is
+if df_p1.empty:
+    power_data_p1 = df_p1.copy()
+else:
+    voltage_cols_p1 = [col for col in df_p1.columns if "Voltage" in col]
+    power_data_p1 = df_p1[df_p1[voltage_cols_p1].ge(5).all(axis=1)]
+
+# Only apply voltage > 5 filter to df_p2
+voltage_cols_p2 = [col for col in df_p2.columns if "Voltage" in col]
+power_data_p2 = df_p2[df_p2[voltage_cols_p2].ge(5).all(axis=1)]
+
+#temp
+
+
 temp_data_t1 = df_t1[(df_t1['Cell 2 Temp'] < 33)]  #HARDCODED VALUE, CHANGE TO MATCH EXPERIMENT
 temp_data_t2 = df_t2[(df_t2['Cell 1 Temp'] < 33)] #HARDCODED VALUE, CHANGE TO MATCH EXPERIMENT
 
