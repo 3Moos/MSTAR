@@ -7,11 +7,20 @@ from pathlib import Path
 import os 
 from datetime import datetime
 
+#Make sure to change hardcoded flie names before running script
+#Make sure to change hard coded values of the Temp Sensors "ts1, ts2, etc." to match the actual sensor to cell used in the experiment
+#Make sure to change the hardcdoded values in the average_map dictionary to match the actual cell numbers and average cells used for extrapolation
+#Also Change the Hardcoded order list to match the actual sensor to cell used in the experiment
+#Make sure to chamge the hardcoded experiment name in variable below
+
+experiment_name = "CaNaMg, 45%, 40%, 35%, 30% - 9-27-2025"
+
 timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 
 df_p1 = pd.read_csv('/Users/moose/Documents/MSTAR - Code/MSTAR/Freezing Chamber/ power 1 09-27-2025-Sat 11-54-29-AM.csv') 
 df_p2 = pd.read_csv('/Users/moose/Documents/MSTAR - Code/MSTAR/Freezing Chamber/ power 2 09-27-2025-Sat 11-54-29-AM.csv') 
 df_t1 = pd.read_csv('/Users/moose/Documents/MSTAR - Code/MSTAR/Freezing Chamber/ temps 09-27-2025-Sat 11-54-29-AM.csv') 
+
 
 df_p1 = df_p1.add_suffix("_p1")
 df_p2 = df_p2.add_suffix("_p2")
@@ -22,8 +31,8 @@ df_t1 = df_t1.drop('Timestamp_t1', axis=1)
 
 ts1 = 'Cell 2'
 ts2 = 'Cell 4'
-ts3 = 'Cell6'
-ts4 = 'Cell8'
+ts3 = 'Cell 6'
+ts4 = 'Cell 8'
 ts5 = 'Cell 9'
 ts6 = 'Cell 11'
 ts7 = 'Cell 13'
@@ -82,10 +91,6 @@ df_t1 = df_t1.rename(columns={
 }
                      )
 
-#df_p1 = df_p1.columns = ['Timestamp', 'Cell 1 Current', 'Cell 1 Voltage', 'Cell 2 Current', 'Cell 2 Voltage', 'Cell 3 Current', 'Cell 3 Voltage', 'Cell 4 Current', 'Cell 4 Voltage', 'Cell 5 Current', 'Cell 5 Voltage', 'Cell 6 Current', 'Cell 6 Voltage', 'Cell 7 Current', 'Cell 7 Voltage', 'Cell 8 Current', 'Cell 8 Voltage']
-#df_p2 = df_p2.columns = ['Cell 9 Current', 'Cell 9 Voltage', 'Cell 10 Current', 'Cell 10 Voltage', 'Cell 11 Current', 'Cell 11 Voltage', 'Cell 12 Current', 'Cell 12 Voltage', 'Cell 13 Current', 'Cell 13 Voltage', 'Cell 14 Current', 'Cell 14 Voltage', 'Cell 15 Current', 'Cell 15 Voltage', 'Cell 16 Current', 'Cell 16 Voltage']
-#df_t1 = df_t1.columns = [f"{ts1} Temp", f"{ts2} Temp", f"{ts3} Temp", f"{ts4} Temp", f"{ts5} Temp", f"{ts6} Temp", f"{ts7} Temp", f"{ts8} Temp"]
-
 #stating this variable off the columns.difference basically just applies this numeric to everything but the timestamp
 num_cols_p1 = df_p1.columns.difference(['Timestamp'])
 df_p1[num_cols_p1] = df_p1[num_cols_p1].apply(pd.to_numeric, errors="coerce")
@@ -94,74 +99,165 @@ df_p2[num_cols_p2] = df_p2[num_cols_p2].apply(pd.to_numeric, errors="coerce")
 num_cols_t1 = df_t1.columns.difference(['Timestamp_t1'])
 df_t1[num_cols_t1] = df_t1[num_cols_t1].apply(pd.to_numeric, errors="coerce")
 
+
+#Extrapolated Temp Data
+#Vibe Start
+
+# Define which cell temperatures to average together at each timestamp
+# Keys = new averaged column names
+# Values = list of temperature columns in df_t1 to average
+average_map = { #HARDCODED, CHANGE TO MATCH EXPERIMENT
+    "Cell 1 Temp": ["Cell 2 Temp", "Cell 9 Temp"],
+    "Cell 3 Temp": ["Cell 2 Temp", "Cell 4 Temp", "Cell 11 Temp"],
+    "Cell 5 Temp": ["Cell 4 Temp", "Cell 6 Temp", "Cell 13 Temp"],
+    "Cell 7 Temp": ["Cell 6 Temp", "Cell 8 Temp", "Cell 15 Temp"],
+    "Cell 10 Temp": ["Cell 9 Temp", "Cell 11 Temp", "Cell 2 Temp"],
+    "Cell 12 Temp": ["Cell 11 Temp", "Cell 13 Temp", "Cell 4 Temp"],
+    "Cell 14 Temp": ["Cell 13 Temp", "Cell 15 Temp", "Cell 6 Temp"],
+    "Cell 16 Temp": ["Cell 15 Temp", "Cell 8 Temp"],
+}
+
+# Create df_t2 with timestamps
+df_t2 = pd.DataFrame()
+df_t2["Timestamp"] = df_p1["Timestamp"]
+
+# Compute time-aligned averages
+for avg_name, cols in average_map.items():
+    valid_cols = [c for c in cols if c in df_t1.columns]
+    if not valid_cols:
+        print(f"[WARNING] Skipping {avg_name} (no valid columns found)")
+        continue
+    df_t2[avg_name] = df_t1[valid_cols].mean(axis=1, skipna=True)
+
+# Optional: round for readability
+df_t2 = df_t2.round(3)
+
+# Save output
+df_t2.to_csv(f"{experiment_name}_temps_averaged_by_time_{timestamp}.csv", index=False)
+
+
+
+
+#Vibe End
+
+
+
 #df_p1 = df_p1.apply(pd.to_numeric, errors="coerce") 
 #df_p2 = df_p2.apply(pd.to_numeric, errors="coerce") 
 #df_t1 = df_t1.apply(pd.to_numeric, errors="coerce") 
 
-
-#combined_data = df[(df['mA 1'] <= .1) & (df['V1'] > 5)] #Filters the data to only take values when mA 1 is less than .1 and V1 is more than 5 
- 
 power_data_p1 = df_p1[(df_p1['Cell 1 Voltage'] > -5)] 
 power_data_p2 = df_p2[(df_p2['Cell 9 Voltage'] > -5)]  
-temp_data_t1 = df_t1[(df_t1[f'{ts1} Temp'] < 33)] 
+temp_data_t1 = df_t1[(df_t1['Cell 2 Temp'] < 33)]  #HARDCODED VALUE, CHANGE TO MATCH EXPERIMENT
+temp_data_t2 = df_t2[(df_t2['Cell 1 Temp'] < 33)] #HARDCODED VALUE, CHANGE TO MATCH EXPERIMENT
 
-combined_data = pd.concat([power_data_p1, power_data_p2, temp_data_t1], axis=1) 
+combined_data = pd.concat([power_data_p1, power_data_p2, temp_data_t1, temp_data_t2], axis=1) 
 
-order = [
+order = [ #HARDCODED, CHANGE TO MATCH EXPERIMENT
     'Timestamp',
     'Cell 1 Current',
     'Cell 1 Voltage',
+    'Cell 1 Temp',
     'Cell 2 Current',
     'Cell 2 Voltage',
-    f"{ts1} Temp",
+    'Cell 2 Temp',
     'Cell 3 Current',
     'Cell 3 Voltage',
+    'Cell 3 Temp',
     'Cell 4 Current',
     'Cell 4 Voltage',
-    f"{ts2} Temp",
+    'Cell 4 Temp',
     'Cell 5 Current',
     'Cell 5 Voltage',
+    'Cell 5 Temp',
     'Cell 6 Current',
     'Cell 6 Voltage',
-    f"{ts3} Temp",
+    'Cell 6 Temp',
     'Cell 7 Current',
     'Cell 7 Voltage',
+    'Cell 7 Temp',
     'Cell 8 Current',
     'Cell 8 Voltage',
-    f"{ts4} Temp",  
+    'Cell 8 Temp', 
     'Cell 9 Current',
     'Cell 9 Voltage',
-    f"{ts5} Temp",
+    'Cell 9 Temp',
     'Cell 10 Current',
     'Cell 10 Voltage',
+    'Cell 10 Temp',
     'Cell 11 Current',
     'Cell 11 Voltage',
-    f"{ts6} Temp",
+    'Cell 11 Temp',
     'Cell 12 Current',
     'Cell 12 Voltage',
+    'Cell 12 Temp',
     'Cell 13 Current',
     'Cell 13 Voltage',
-    f"{ts7} Temp",
+    'Cell 13 Temp',
     'Cell 14 Current',
     'Cell 14 Voltage',
+    'Cell 14 Temp',
     'Cell 15 Current',
     'Cell 15 Voltage',
-    f"{ts8} Temp",
+    'Cell 15 Temp',
     'Cell 16 Current',
     'Cell 16 Voltage',
+    'Cell 16 Temp'
 
 ]
 
 combined_data_ordered = combined_data[order]
 
-combined_data_ordered.to_csv(f'combined_data_{timestamp}.csv', index=False)
+combined_data_ordered.to_csv(f'{experiment_name}combined_data_{timestamp}.csv', index=False)
 
 #combined_data.to_csv(f'combined_data.csv_{timestamp}', index=False) #index=False removes the labing index that is to the left of the data by default e.g. 1,2,3,4,5,6,7,...,n
 
-
-#Everything above this line organaizes the data and filters it based on the conditions set
-#Everything below this line is for analysis of the data
-
 power_on_data = combined_data_ordered[(combined_data_ordered['Cell 1 Voltage'] > 5)] 
 
-power_on_data.to_csv(f'power_on_data_{timestamp}.csv', index=False)
+power_on_data.to_csv(f'{experiment_name}power_on_data_{timestamp}.csv', index=False)
+
+#Everything above this line organaizes the data and filters it based on the conditions set
+
+#Everything below this line is for analysis of the data
+
+#Okay I need to basically parse each induvidual set of columns(ignoring timestamp) and then output all the data set for the specified value of current I was looking for then repeat to all of the sets (16 total))\
+
+cell1_data = power_on_data[['Cell 1 Current', 'Cell 1 Voltage', 'Cell 1 Temp']]
+cell2_data = power_on_data[['Cell 2 Current', 'Cell 2 Voltage', 'Cell 2 Temp']]
+cell3_data = power_on_data[['Cell 3 Current', 'Cell 3 Voltage', 'Cell 3 Temp']]
+cell4_data = power_on_data[['Cell 4 Current', 'Cell 4 Voltage', 'Cell 4 Temp']] 
+cell5_data = power_on_data[['Cell 5 Current', 'Cell 5 Voltage', 'Cell 5 Temp']]
+cell6_data = power_on_data[['Cell 6 Current', 'Cell 6 Voltage', 'Cell 6 Temp']]
+cell7_data = power_on_data[['Cell 7 Current', 'Cell 7 Voltage', 'Cell 7 Temp']]
+cell8_data = power_on_data[['Cell 8 Current', 'Cell 8 Voltage', 'Cell 8 Temp']]
+cell9_data = power_on_data[['Cell 9 Current', 'Cell 9 Voltage', 'Cell 9 Temp']]
+cell10_data = power_on_data[['Cell 10 Current', 'Cell 10 Voltage', 'Cell 10 Temp']]
+cell11_data = power_on_data[['Cell 11 Current', 'Cell 11 Voltage', 'Cell 11 Temp']]
+cell12_data = power_on_data[['Cell 12 Current', 'Cell 12 Voltage', 'Cell 12 Temp']]
+cell13_data = power_on_data[['Cell 13 Current', 'Cell 13 Voltage', 'Cell 13 Temp']]
+cell14_data = power_on_data[['Cell 14 Current', 'Cell 14 Voltage', 'Cell 14 Temp']]
+cell15_data = power_on_data[['Cell 15 Current', 'Cell 15 Voltage', 'Cell 15 Temp']]
+cell16_data = power_on_data[['Cell 16 Current', 'Cell 16 Voltage', 'Cell 16 Temp']]
+
+
+
+cell1_data = cell1_data[(cell1_data['Cell 1 Current'] <= .1)]
+cell2_data = cell2_data[(cell2_data['Cell 2 Current'] <= .1)]
+cell3_data = cell3_data[(cell3_data['Cell 3 Current'] <= .1)]
+cell4_data = cell4_data[(cell4_data['Cell 4 Current'] <= .1)]
+cell5_data = cell5_data[(cell5_data['Cell 5 Current'] <= .1)]
+cell6_data = cell6_data[(cell6_data['Cell 6 Current'] <= .1)]
+cell7_data = cell7_data[(cell7_data['Cell 7 Current'] <= .1)]
+cell8_data = cell8_data[(cell8_data['Cell 8 Current'] <= .1)]
+cell9_data = cell9_data[(cell9_data['Cell 9 Current'] <= .1)]
+cell10_data = cell10_data[(cell10_data['Cell 10 Current'] <= .1)]
+cell11_data = cell11_data[(cell11_data['Cell 11 Current'] <= .1)]
+cell12_data = cell12_data[(cell12_data['Cell 12 Current'] <= .1)]
+cell13_data = cell13_data[(cell13_data['Cell 13 Current'] <= .1)]
+cell14_data = cell14_data[(cell14_data['Cell 14 Current'] <= .1)]
+cell15_data = cell15_data[(cell15_data['Cell 15 Current'] <= .1)]
+cell16_data = cell16_data[(cell16_data['Cell 16 Current'] <= .1)]
+
+analyized_data = pd.concat([cell1_data, cell2_data, cell3_data, cell4_data, cell5_data, cell6_data, cell7_data, cell8_data, cell9_data, cell10_data, cell11_data, cell12_data, cell13_data, cell14_data, cell15_data, cell16_data], axis=1)
+
+analyized_data.to_csv(f'{experiment_name}analyized_data_{timestamp}.csv', index=False)
