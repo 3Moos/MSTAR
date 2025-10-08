@@ -28,4 +28,4 @@ basically, depending on the range that the sensor reads out (the current readout
 
 <br>[ina219 datasheet](https://learn.adafruit.com/adafruit-ina219-current-sensor-breakout?view=all)
 
-![md visualized here](Screenshot from 2025-10-08 06-22-23.png)
+![md visualized here](https://github.com/3Moos/MSTAR/blob/main/documentationGeneral/Screenshot_2025-10-08_06-22-23.png?raw=true)
