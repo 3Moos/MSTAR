@@ -27,3 +27,5 @@ basically, depending on the range that the sensor reads out (the current readout
 *and it seems that there is literally a polarity switcher ON the board, just figured it should be noted*
 
 <br>[ina219 datasheet](https://learn.adafruit.com/adafruit-ina219-current-sensor-breakout?view=all)
+
+![md visualized here](Screenshot from 2025-10-08 06-22-23.png)
