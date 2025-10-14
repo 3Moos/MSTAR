@@ -9,9 +9,9 @@ current_time = time.localtime()
 current_date_time = time.strftime("%Y-%m-%d %H:%M:%S", current_time)
 
 # BASE_DIR = Path("/Users/moose/Desktop/MSTAR/CSV data")
-BASE_DIR = Path("../caclo4_data/caclo4")
+BASE_DIR = Path("caclo4_data/caclo4")
 #file = "/Users/moose/Desktop/MSTAR/curveGen/07082025 10% CaClO4 30% sat ink 18V NEW fine JSC W temp SENSOR 2 cell 7.5 NN.csv"
-OUTPUT_NAME = f"analysis_csv_only - {time.strftime('%Y-%m-%d %H:%M:%S')}.csv"
+OUTPUT_NAME = f"analysis_csv_only - {time.strftime('%Y-%m-%d %H-%M-%S')}.csv"
 
 # Columns we expect in each CSV
 REQUIRED = [
@@ -58,7 +58,7 @@ def analyze_one(file_path: Path):
     av_current = current.mean()
     stdev_current = current.std()
     current_delta = float(current_end - current_start)
-    oxygen_production = np.trapezoid(oxygen, times)
+    oxygen_production = np.trapz(oxygen, times)
 
     run_time = int(times_end - times_start) #seconds
 
