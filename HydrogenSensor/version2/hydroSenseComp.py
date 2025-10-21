@@ -28,8 +28,9 @@ def beginFile():
     folder_location = "/Users/moose/Documents/MSTAR_Code/MSTAR/hydrogensensor"
     os.makedirs(folder_location, exist_ok=True) ##
     formatted_date_time = now.strftime("%m_%d_%Y %I_%M_%S %p")
-    formatted_date_time = os.path.join(folder_location, formatted_date_time + ".csv")
+    formatted_date_time = os.path.join(folder_locat so, ion, formatted_date_time + ".csv")
     print(formatted_date_time)
+    #adding file for branch merging
     # checks if file exists, and if not creates one
     if (os.path.exists(formatted_date_time)):
         file = open(formatted_date_time, "a")
