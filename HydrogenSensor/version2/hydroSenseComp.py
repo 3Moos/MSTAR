@@ -13,8 +13,9 @@ import datetime
 
 # sets up serial on COM 3 (where the pico is, at least for testing) and at a BAUD rate of 9600
 def beginSerial():
-    ser = serial.Serial("COM3", 9600)
+    ser = serial.Serial("/dev/tty.usbmodem1101", 9600, timeout = 4)
     return ser
+
 
 # creates file and whatnot
 def beginFile():
@@ -24,9 +25,10 @@ def beginFile():
     
     
     #data is formatted for file name
-    folder_location = "G:\\.shortcut-targets-by-id\\1rzVYVQZQk3mVNlFQ7nqREgc8IdFn3Y_Z\\Martian Penetrolyzer Project 2023\\Code\\PicoCode\\Wireless Communications\\"
+    folder_location = "/Users/moose/Documents/MSTAR_Code/MSTAR/hydrogensensor"
+    os.makedirs(folder_location, exist_ok=True) ##
     formatted_date_time = now.strftime("%m_%d_%Y %I_%M_%S %p")
-    formatted_date_time = folder_location + formatted_date_time + ".csv"
+    formatted_date_time = os.path.join(folder_location, formatted_date_time + ".csv")
     print(formatted_date_time)
     # checks if file exists, and if not creates one
     if (os.path.exists(formatted_date_time)):
@@ -35,7 +37,7 @@ def beginFile():
     else:
         file = open(formatted_date_time, "w")
         # if file is brand new, add the formatting stuff
-        file.write("volt1 V, volt2 V, H ppm1, H ppm2\n")
+        file.write("timestamp, volt1 V, volt2 V, H ppm1, H ppm2\n")
     
     # returns file such that it can be used all around
     return file
@@ -47,9 +49,14 @@ def beginWrite(pico = None, file = None):
     if pico is not None and file is not None:
 
         # added current time stamp, and only referencing pico once rather than twice to reduce error
-        fullString = current_time_stamp + str(pico.readline().decode("utf-8").strip())
-        print(fullString)
-        file.write(fullString + "\n")
+        line = pico.readline().decode("utf-8").strip()
+        if not line:
+            print("[no data]")
+            return
+        print(line)  # same format as Pico output
+        csv_line = f"{current_time_stamp.isoformat(timespec='seconds')},{line}"
+        file.write(csv_line + "\n")
+        file.flush()
 
         # to reduce risk of program crashing and losing data
         # force writes data to drive without closing the file entirely
@@ -64,6 +71,9 @@ def beginWrite(pico = None, file = None):
 # various init
 pico = beginSerial()
 file = beginFile()
+
+print("Connected to:", pico.name)
+
 
 if __name__ == "__main__":
     try:
