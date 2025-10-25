@@ -1,0 +1,14 @@
+Cells 1-4 = 25% NaCaMg
+Cells 5-8 = 20%
+Cells 9-12 = 15%
+Cells 13-16 = 10%
+
+Temp Sensors
+t1 = C2
+t2 = C4
+t3 = C6
+t4 = C8
+t5 = C9
+t6 = C11 (BROKEN< IGNORE DATA, broke mid experiment)
+t7 = C13
+t8 = C15	

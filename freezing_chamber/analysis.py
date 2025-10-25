@@ -13,13 +13,13 @@ from datetime import datetime
 #Also Change the Hardcoded order list to match the actual sensor to cell used in the experiment
 #Make sure to chamge the hardcoded experiment name in variable below
 
-experiment_name = "CaNaMg, 35%, 30% - 9-5-2025"
+experiment_name = "CaNaMg_25pct_20pct_15pct_10pct_5pct_10242025"
 
 timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 
-df_p1 = pd.read_csv('/Users/moose/Documents/MSTAR - Code/MSTAR/Freezing Chamber/blank.csv') 
-df_p2 = pd.read_csv('/Users/moose/Documents/MSTAR - Code/MSTAR/Freezing Chamber/blank.csv') 
-df_t1 = pd.read_csv('/Users/moose/Documents/MSTAR - Code/MSTAR/Freezing Chamber/ temps 09-05-2025-Fri 16-34-30-PM.csv') 
+df_p1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg 25%, 20%, 15%, 10%, 5%/logs 10-24-2025-Fri 17-25-07-PM/ power 1 10-24-2025-Fri 17-25-07-PM.csv') 
+df_p2 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg 25%, 20%, 15%, 10%, 5%/logs 10-24-2025-Fri 17-25-07-PM/ power 2 10-24-2025-Fri 17-25-07-PM.csv') 
+df_t1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg 25%, 20%, 15%, 10%, 5%/logs 10-24-2025-Fri 17-25-07-PM/ temps 10-24-2025-Fri 17-25-07-PM.csv') 
 
 
 df_p1 = df_p1.add_suffix("_p1")
