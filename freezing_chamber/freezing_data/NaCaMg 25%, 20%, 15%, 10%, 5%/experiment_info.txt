@@ -1,0 +1,18 @@
+Experiment date - Fri, Oct 24th, 2025.
+Experiment concentrations:
+5% NaClMg -  4 cells - 13,14,15,16
+10% NaClMg - 2 cells - 11,12
+15% NaClMg - 2 cells - 9,10
+20% NaClMg - 4 cells - 5,6,7,8
+25% NaClMg - 4 cells - 1,2,3,4
+
+Temp Sensors:
+t1 - c2
+t2 - c4
+t3 - c6
+t4 - c8
+t5 - c9
+t6 - c11
+t7 - c13
+t8 - c15
+
