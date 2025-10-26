@@ -187,7 +187,11 @@ power_data_p2 = df_p2[df_p2[voltage_cols_p2].ge(5).all(axis=1)]
 
 
 temp_data_t1 = df_t1[(df_t1[ts1] < 33)]  #HARDCODED VALUE, CHANGE TO MATCH EXPERIMENT
-temp_data_t2 = df_t2[(df_t2[f"{c1conc} Cell 1 Temp"] < 33)] #HARDCODED VALUE, CHANGE TO MATCH EXPERIMENT
+# Filter df_t2 by temperature but drop its Timestamp column to avoid duplicate Timestamp columns when concatenating
+if 'Timestamp' in df_t2.columns:
+    temp_data_t2 = df_t2[df_t2[f"{c1conc} Cell 1 Temp"] < 33].drop(columns=['Timestamp'])
+else:
+    temp_data_t2 = df_t2[df_t2[f"{c1conc} Cell 1 Temp"] < 33]
 
 combined_data = pd.concat([power_data_p1, power_data_p2, temp_data_t1, temp_data_t2], axis=1) 
 
