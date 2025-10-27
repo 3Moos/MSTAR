@@ -107,6 +107,22 @@ c14temp = f'{c14conc} Cell 14 Temp'
 c15temp = ts8
 c16temp = f'{c16conc} Cell 16 Temp'
 
+c1resistance = f'{c1conc} Cell 1 Resistance'
+c2resistance = f'{c2conc} Cell 2 Resistance'
+c3resistance = f'{c3conc} Cell 3 Resistance'
+c4resistance = f'{c4conc} Cell 4 Resistance'
+c5resistance = f'{c5conc} Cell 5 Resistance'
+c6resistance = f'{c6conc} Cell 6 Resistance'
+c7resistance = f'{c7conc} Cell 7 Resistance'
+c8resistance = f'{c8conc} Cell 8 Resistance'
+c9resistance = f'{c9conc} Cell 9 Resistance'
+c10resistance = f'{c10conc} Cell 10 Resistance'
+c11resistance = f'{c11conc} Cell 11 Resistance'
+c12resistance = f'{c12conc} Cell 12 Resistance'
+c13resistance = f'{c13conc} Cell 13 Resistance'
+c14resistance = f'{c14conc} Cell 14 Resistance'
+c15resistance = f'{c15conc} Cell 15 Resistance'
+c16resistance = f'{c16conc} Cell 16 Resistance'
 
 
 
@@ -246,55 +262,80 @@ else:
 
 combined_data = pd.concat([power_data_p1, power_data_p2, temp_data_t1, temp_data_t2], axis=1) 
 
+# Calculate resistance for all cells in combined_data
+for i in range(1, 17):
+    current_col = globals()[f'c{i}current']
+    voltage_col = globals()[f'c{i}voltage']
+    resistance_col = globals()[f'c{i}resistance']  # Use the concentration-prefixed column name
+    if current_col in combined_data.columns and voltage_col in combined_data.columns:
+        # Calculate resistance: (V/I) * volume_correction
+        combined_data[resistance_col] = (combined_data[voltage_col] / (combined_data[current_col] / 1000)) * 0.00125
+
 order = [ #HARDCODED, CHANGE TO MATCH EXPERIMENT
     'Timestamp',
     c1current,
     c1voltage,
+    c1resistance,
     c1temp,
     c2current,
     c2voltage,
+    c2resistance,
     c2temp,
     c3current,
     c3voltage,
+    c3resistance,
     c3temp,
     c4current,
     c4voltage,
+    c4resistance,
     c4temp,
     c5current,
     c5voltage,
+    c5resistance,
     c5temp,
     c6current,
     c6voltage,
+    c6resistance,
     c6temp,
     c7current,
     c7voltage,
+    c7resistance,
     c7temp,
     c8current,
     c8voltage,
+    c8resistance,
     c8temp,
     c9current,
     c9voltage,
+    c9resistance,
     c9temp,
     c10current,
     c10voltage,
+    c10resistance,
     c10temp,
     c11current,
     c11voltage,
+    c11resistance,
     c11temp,
     c12current,
     c12voltage,
+    c12resistance,
     c12temp,
     c13current,
     c13voltage,
+    c13resistance,
     c13temp,
     c14current,
     c14voltage,
+    c14resistance,
     c14temp,
     c15current,
     c15voltage,
+    c15resistance,
     c15temp,
     c16current,
     c16voltage,
+    c16resistance,
     c16temp
 ]
 
@@ -304,8 +345,7 @@ combined_data_ordered.to_csv(f'{experiment_name}combined_data_{timestamp}.csv', 
 
 #combined_data.to_csv(f'combined_data.csv_{timestamp}', index=False) #index=False removes the labing index that is to the left of the data by default e.g. 1,2,3,4,5,6,7,...,n
 
-power_on_data = combined_data_ordered[(combined_data_ordered[c9voltage] > 5)] 
-
+power_on_data = combined_data_ordered[(combined_data_ordered[c9voltage] > 5)]
 power_on_data.to_csv(f'{experiment_name}power_on_data_{timestamp}.csv', index=False)
 
 #Everything above this line organaizes the data and filters it based on the conditions set
@@ -342,6 +382,10 @@ for i in range(1, 17):
 
     # Include timestamp in the slice
     cell_df = power_on_data[[timestamp_col, curr_col, volt_col, temp_col]].copy()
+    
+    # Calculate resistance with volume correction (0.00125)
+    resistance_col = f'Cell {i} Resistance'
+    cell_df[resistance_col] = (cell_df[volt_col] / (cell_df[curr_col] / 1000)) * 0.00125
 
     # Get trimmed data with timestamps
     trimmed_df = trim_after_current_drop(cell_df, curr_col, timestamp_col)
@@ -352,7 +396,7 @@ for i in range(1, 17):
         cell_dfs.append(trimmed_df)
     else:
         # If no cutoff found, append empty df with same columns including renamed timestamp
-        empty_cols = [f"Cell {i} Timestamp", curr_col, volt_col, temp_col]
+        empty_cols = [f"Cell {i} Timestamp", curr_col, volt_col, temp_col, resistance_col]
         cell_dfs.append(pd.DataFrame(columns=empty_cols))
 
 # --- Concatenate cells side-by-side ---
