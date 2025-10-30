@@ -13,14 +13,18 @@ from datetime import datetime
 #Also Change the Hardcoded order list to match the actual sensor to cell used in the experiment
 #Make sure to chamge the hardcoded experiment name in variable below
 #32 #CHNAGE THESE VARIABLES TO MAGTCH CELL CONC
-experiment_name = "CaNaMg_25pct_20pct_15pct_10pct_5pct_10242025"
+experiment_name = "CaNaMg_35pct_30pct_09052025"
 
 timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 
-df_p1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg 25%, 20%, 15%, 10%, 5%/logs 10-24-2025-Fri 17-25-07-PM/ power 1 10-24-2025-Fri 17-25-07-PM.csv') 
-df_p2 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg 25%, 20%, 15%, 10%, 5%/logs 10-24-2025-Fri 17-25-07-PM/ power 2 10-24-2025-Fri 17-25-07-PM.csv') 
-df_t1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg 25%, 20%, 15%, 10%, 5%/logs 10-24-2025-Fri 17-25-07-PM/ temps 10-24-2025-Fri 17-25-07-PM.csv') 
+#base_dir = '/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_15%_10%/Freezing_Logs/logs 09-12-2025-Fri 10-11-29-AM'
+#df_p1 = pd.read_csv(f"{base_dir}/ (DO NOT USE! Was just copying power 2 data)power 1 09-12-2025-Fri 10-11-29-AM.csvv")
+#df_p2 = pd.read_csv(f"{base_dir}/ power_2_09-12-2025-Fri 10-11-29-AM.csv")
+#df_t1 = pd.read_csv(f"{base_dir}/ temps-09-12-2025-Fri 10-11-29-AM.csv")
 
+df_p1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_45%_40%_35%_30%/exp-1/freezing-logs-09-05-2025-fri-16-34-30-PM/do-not-use-was-just-copying-power-2-data-power-1-09-05-2025-fri-16-34-30-PM.csv')
+df_p2 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_45%_40%_35%_30%/exp-1/freezing-logs-09-05-2025-fri-16-34-30-PM/ power-2-09-05-2025-fri-16-34-30-PM.csv')
+df_t1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_45%_40%_35%_30%/exp-1/freezing-logs-09-05-2025-fri-16-34-30-PM/ temps-09-05-2025-fri-16-34-30-PM.csv')
 
 df_p1 = df_p1.add_suffix("_p1")
 df_p2 = df_p2.add_suffix("_p2")
@@ -30,22 +34,22 @@ df_p2 = df_p2.drop('Timestamp_p2', axis=1)
 df_t1 = df_t1.drop('Timestamp_t1', axis=1)
 
 #CHNAGE THESE VARIABLES TO MAGTCH CELL CONC
-c1conc = "25pct"
-c2conc = "25pct"
-c3conc = "25pct"
-c4conc = "25pct"
-c5conc = "20pct"
-c6conc = "20pct"
-c7conc = "20pct"
-c8conc = "20pct"
-c9conc = "15pct"
-c10conc = "15pct"
-c11conc = "10pct"
-c12conc = "10pct"
-c13conc = "5pct"
-c14conc = "5pct"
-c15conc = "5pct"
-c16conc = "5pct"
+c1conc = "0pct"
+c2conc = "0pct"
+c3conc = "0pct"
+c4conc = "0pct"
+c5conc = "0pct"
+c6conc = "0pct"
+c7conc = "0pct"
+c8conc = "0pct"
+c9conc = "30pct"
+c10conc = "30pct"
+c11conc = "30pct"
+c12conc = "30pct"
+c13conc = "35pct"
+c14conc = "35pct"
+c15conc = "35pct"
+c16conc = "35pct"
 
 c1voltage = f'{c1conc} Cell 1 Voltage'
 c2voltage = f'{c2conc} Cell 2 Voltage'
