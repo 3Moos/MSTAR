@@ -13,7 +13,7 @@ from datetime import datetime
 #Also Change the Hardcoded order list to match the actual sensor to cell used in the experiment
 #Make sure to chamge the hardcoded experiment name in variable below
 #32 #CHNAGE THESE VARIABLES TO MAGTCH CELL CONC
-experiment_name = "CaNaMg_35pct_30pct_09052025"
+experiment_name = "CaNaMg-25pct-20pct-15pct-10pct-5pct-10242025"
 
 timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 
@@ -22,9 +22,9 @@ timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 #df_p2 = pd.read_csv(f"{base_dir}/ power_2_09-12-2025-Fri 10-11-29-AM.csv")
 #df_t1 = pd.read_csv(f"{base_dir}/ temps-09-12-2025-Fri 10-11-29-AM.csv")
 
-df_p1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_45%_40%_35%_30%/exp-1/freezing-logs-09-05-2025-fri-16-34-30-PM/do-not-use-was-just-copying-power-2-data-power-1-09-05-2025-fri-16-34-30-PM.csv')
-df_p2 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_45%_40%_35%_30%/exp-1/freezing-logs-09-05-2025-fri-16-34-30-PM/ power-2-09-05-2025-fri-16-34-30-PM.csv')
-df_t1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_45%_40%_35%_30%/exp-1/freezing-logs-09-05-2025-fri-16-34-30-PM/ temps-09-05-2025-fri-16-34-30-PM.csv')
+df_p1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_25%_20%_15%_10%_5%/logs 10-24-2025-Fri 17-25-07-PM/ power 1 10-24-2025-Fri 17-25-07-PM.csv')
+df_p2 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_25%_20%_15%_10%_5%/logs 10-24-2025-Fri 17-25-07-PM/ power 2 10-24-2025-Fri 17-25-07-PM.csv')
+df_t1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_25%_20%_15%_10%_5%/logs 10-24-2025-Fri 17-25-07-PM/ temps 10-24-2025-Fri 17-25-07-PM.csv')
 
 df_p1 = df_p1.add_suffix("_p1")
 df_p2 = df_p2.add_suffix("_p2")
@@ -34,22 +34,22 @@ df_p2 = df_p2.drop('Timestamp_p2', axis=1)
 df_t1 = df_t1.drop('Timestamp_t1', axis=1)
 
 #CHNAGE THESE VARIABLES TO MAGTCH CELL CONC
-c1conc = "0pct"
-c2conc = "0pct"
-c3conc = "0pct"
-c4conc = "0pct"
-c5conc = "0pct"
-c6conc = "0pct"
-c7conc = "0pct"
-c8conc = "0pct"
-c9conc = "30pct"
-c10conc = "30pct"
-c11conc = "30pct"
-c12conc = "30pct"
-c13conc = "35pct"
-c14conc = "35pct"
-c15conc = "35pct"
-c16conc = "35pct"
+c1conc = "25pct"
+c2conc = "25pct"
+c3conc = "25pct"
+c4conc = "25pct"
+c5conc = "20pct"
+c6conc = "20pct"
+c7conc = "20pct"
+c8conc = "20pct"
+c9conc = "15pct"
+c10conc = "15pct"
+c11conc = "10pct"
+c12conc = "10pct"
+c13conc = "5pct"
+c14conc = "5pct"
+c15conc = "5pct"
+c16conc = "5pct"
 
 c1voltage = f'{c1conc} Cell 1 Voltage'
 c2voltage = f'{c2conc} Cell 2 Voltage'
@@ -353,7 +353,6 @@ power_on_data = combined_data_ordered[(combined_data_ordered[c9voltage] > 5)]
 power_on_data.to_csv(f'{experiment_name}power_on_data_{timestamp}.csv', index=False)
 
 #Everything above this line organaizes the data and filters it based on the conditions set
-
 #Everything below this line is for analysis of the data
 
 
@@ -362,7 +361,7 @@ power_on_data.to_csv(f'{experiment_name}power_on_data_{timestamp}.csv', index=Fa
 
 
 
-def trim_after_current_drop(df, current_col, timestamp_col, threshold=0.1):
+def trim_after_current_drop(df, current_col, timestamp_col, threshold=0.2):
     """Find first row where current <= threshold and keep all rows after, preserving timestamps."""
     below_threshold = df[df[current_col] <= threshold]
     if below_threshold.empty:
@@ -396,7 +395,15 @@ for i in range(1, 17):
 
     # If valid data exists, rename timestamp for this cell and append
     if not trimmed_df.empty:
+        # rename and reset index so concatenation doesn't align on original dataframe indices
         trimmed_df = trimmed_df.rename(columns={timestamp_col: f"Cell {i} Timestamp"})
+        trimmed_df = trimmed_df.reset_index(drop=True)
+        # debug: report trimmed length and first timestamp
+        try:
+            first_ts = trimmed_df.iloc[0][f"Cell {i} Timestamp"]
+        except Exception:
+            first_ts = None
+        print(f"Cell {i}: trimmed rows={len(trimmed_df)}, start_timestamp={first_ts}")
         cell_dfs.append(trimmed_df)
     else:
         # If no cutoff found, append empty df with same columns including renamed timestamp
