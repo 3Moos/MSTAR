@@ -1,0 +1,21 @@
+This experiment was ran on Nov 7, 2025
+Cells 1-6 are 60%
+7-12 55%
+12-14 45%
+15-16 40%
+
+t1 c2
+t2 c4
+t3 c6
+t4 c8
+t5 c9
+t6 c11
+t7 c13
+t8 c15
+
+Experiment ran by Kaden Olson.
+Prepped by Kaden Olson
+Prepped day of experiment.
+perchlorates mixed ~2 months prior to experiment and stored in frezer with paraf
+ilm seal.
+

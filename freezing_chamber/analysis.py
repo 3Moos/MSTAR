@@ -13,7 +13,7 @@ from datetime import datetime
 #Also Change the Hardcoded order list to match the actual sensor to cell used in the experiment
 #Make sure to chamge the hardcoded experiment name in variable below
 #32 #CHNAGE THESE VARIABLES TO MAGTCH CELL CONC
-experiment_name = "canamg-35pct-30pct-09052025"
+experiment_name = "canamg-60pct-55pct-45pct-40pct-11072025"
 
 timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 
@@ -22,9 +22,9 @@ timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 #df_p2 = pd.read_csv(f"{base_dir}/ power_2_09-12-2025-Fri 10-11-29-AM.csv")
 #df_t1 = pd.read_csv(f"{base_dir}/ temps-09-12-2025-Fri 10-11-29-AM.csv")
 
-df_p1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_45%_40%_35%_30%/exp-1/freezing-logs-09-05-2025-fri-16-34-30-PM/do-not-use-was-just-copying-power-2-data-power-1-09-05-2025-fri-16-34-30-PM.csv')
-df_p2 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_45%_40%_35%_30%/exp-1/freezing-logs-09-05-2025-fri-16-34-30-PM/ power-2-09-05-2025-fri-16-34-30-PM.csv')
-df_t1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_45%_40%_35%_30%/exp-1/freezing-logs-09-05-2025-fri-16-34-30-PM/ temps-09-05-2025-fri-16-34-30-PM.csv')
+df_p1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/nacamg-60pct-55pct-45pct-40pct-11072025/logs 11-07-2025-Fri 14-39-35-PM/ power 1 11-07-2025-Fri 14-39-35-PM.csv')
+df_p2 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/nacamg-60pct-55pct-45pct-40pct-11072025/logs 11-07-2025-Fri 14-39-35-PM/ power 2 11-07-2025-Fri 14-39-35-PM.csv')
+df_t1 = pd.read_csv('/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/nacamg-60pct-55pct-45pct-40pct-11072025/logs 11-07-2025-Fri 14-39-35-PM/ temps 11-07-2025-Fri 14-39-35-PM.csv')
 
 df_p1 = df_p1.add_suffix("_p1")
 df_p2 = df_p2.add_suffix("_p2")
@@ -34,22 +34,22 @@ df_p2 = df_p2.drop('Timestamp_p2', axis=1)
 df_t1 = df_t1.drop('Timestamp_t1', axis=1)
 
 #CHNAGE THESE VARIABLES TO MAGTCH CELL CONC
-c1conc = "DNEpct"
-c2conc = "DNEpct"
-c3conc = "DNEpct"
-c4conc = "DNEpct"
-c5conc = "DNEpct"
-c6conc = "DNEpct"
-c7conc = "DNEpct"
-c8conc = "DNEpct"
-c9conc = "35pct"
-c10conc = "35pct"
-c11conc = "35pct"
-c12conc = "35pct"
-c13conc = "30pct"
-c14conc = "30pct"
-c15conc = "30pct"
-c16conc = "30pct"
+c1conc = "60pct"
+c2conc = "60pct"
+c3conc = "60pct"
+c4conc = "60pct"
+c5conc = "60pct"
+c6conc = "60pct"
+c7conc = "55pct"
+c8conc = "55pct"
+c9conc = "55pct"
+c10conc = "55pct"
+c11conc = "55pct"
+c12conc = "55pct"
+c13conc = "45pct"
+c14conc = "45pct"
+c15conc = "40pct"
+c16conc = "40pct"
 
 c1voltage = f'{c1conc} Cell 1 Voltage'
 c2voltage = f'{c2conc} Cell 2 Voltage'
