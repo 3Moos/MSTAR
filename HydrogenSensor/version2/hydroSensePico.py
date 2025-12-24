@@ -8,6 +8,9 @@ import os
 import json
 from config import config
 
+V_REF = 3.3          # Pico ADC reference voltage
+PPM_MAX = 40000      # sensor datasheet maximum (change later if needed)
+
 # define the pins for the respective voltage sensors
 pin = analogio.AnalogIn(A0)
 pin2 = analogio.AnalogIn(A1)
@@ -25,7 +28,15 @@ def dac_to_ppm_ratio(voltage, inMin = 0.0, inMax = 65535, outMin = 0.0, outMax =
 # index to show how many times sensor has run, important because pico and computer might not start at the same time
 # ppm_mult is determined based off of the reference voltage from the pico (3.3) divided by the max value that can be read (ppm)
 reading_index = 0
-ppm_multiplier = 3.3/20000
+
+#ppm_multiplier = 3.3/20000
+
+print(
+    f"Reading {reading_index} | "
+    f"ADC1: {dac} | ADC2: {dac2} | "
+    f"V1: {voltage:.3f} V | V2: {voltage2:.3f} V | "
+    f"PPM1: {converted_ppm:.1f} ppm | PPM2: {converted_ppm2:.1f} ppm"
+)
 
 while True:
 
@@ -40,8 +51,14 @@ while True:
     # little bit of funky unit conversion to get the ppm
     # IDEALLY, this results in the hydrogen ppm, but further testing is required to verify this
     # it is likely that we would see something ~.05
-    converted_ppm = 1.0 / (float(voltage) / float(ppm_multiplier))
-    converted_ppm2 = 1.0 / (float(voltage2) / float(ppm_multiplier))
+     #converted_ppm = 1.0 / (float(voltage) / float(ppm_multiplier))
+     #converted_ppm2 = 1.0 / (float(voltage2) / float(ppm_multiplier))
+
+    converted_ppm = (voltage / V_REF) * PPM_MAX
+    converted_ppm2 = (voltage2 / V_REF) * PPM_MAX
+    converted_ppm = max(0, min(converted_ppm, PPM_MAX))
+    converted_ppm2 = max(0, min(converted_ppm2, PPM_MAX))
+
     
     # btw, the f string formatting is just so it only shows up to a certain amount of decimals, in this case two
     # print(f"Index: {reading_index}, DAC reading: {voltage}, Voltage Conversion: {ppm:,.2f}, DAC2 reading: {voltage2}, Voltage2 Conversion: {ppm2:,.2f}, PPM Conversion: {converted_ppm:,.2f}, PPM2 Conversion: {converted_ppm2:,.2f}")
