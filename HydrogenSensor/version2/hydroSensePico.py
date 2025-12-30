@@ -65,7 +65,7 @@ while True:
     
 
     #three decimals to avoid accidental scientific notation
-    print("V1, DAC1, PPM1, |, V2, DAC2, PPM2")
-    print(f"{voltage},{dac},{converted_ppm:,.3f}, |, {voltage2}, {dac2}, {converted_ppm2:,.3f}ppm")
+  
+    print(f"{voltage},{dac},{converted_ppm:,.3f}, |, {voltage2}, {dac2}, {converted_ppm2:,.3f}")
   
     sleep(1)
