@@ -1,46 +1,42 @@
-import analogio
-from board import *
+from machine import ADC, Pin
 from time import sleep
-import wifi
-import socketpool
-import adafruit_requests
-import os
-import json
-from config import config
 
-ppm_max = 20000  #This is the Linear range of the sensor
-ref_voltage = 3.3  #Reference voltage of the Pico
-MAX_ADC_VALUE = 65535  #16 bit ADC
+# ADC setup (RP2040 = 16-bit scaled)
+adc1 = ADC(Pin(26))  # A0
+adc2 = ADC(Pin(27))  # A1
+adc3 = ADC(Pin(28))  # A2
 
-V_MIN = 0.02  # Voltage at 0 ppm
-V_MAX = 3.0   # Voltage at 20000 ppm
+REF_VOLTAGE = 3.3
+MAX_ADC_VALUE = 65535
+
+V_MIN = 0.02
+V_MAX = 3.0
 PPM_MIN = 0
 PPM_MAX = 20000
 
-pin1 = analogio.AnalogIn(A0)   
-pin2 = analogio.AnalogIn(A1)
-pin3 = analogio.AnalogIn(A2)
+def adc_to_voltage(raw):
+    return (raw / MAX_ADC_VALUE) * REF_VOLTAGE
 
-#0.02V = 0ppm
-#3.0V = 20000ppm
+def calculate_ppm(voltage):
+    if voltage <= V_MIN:
+        return PPM_MIN
+    elif voltage >= V_MAX:
+        return PPM_MAX
+    else:
+        return (PPM_MAX - PPM_MIN) * (voltage - V_MIN) / (V_MAX - V_MIN)
 
 while True:
-    raw_voltage1 = pin1.value
-    raw_voltage2 = pin2.value
-    raw_voltage3 = pin3.value
-    voltage1 = (raw_voltage1 / MAX_ADC_VALUE) * ref_voltage
-    voltage2 = (raw_voltage2 / MAX_ADC_VALUE) * ref_voltage
-    voltage3 = (raw_voltage3 / MAX_ADC_VALUE) * ref_voltage
-    
-    # Calculate PPM for each sensor
-    def calculate_ppm(voltage):
-        if voltage <= V_MIN:
-            return PPM_MIN
-        elif voltage >= V_MAX:
-            return PPM_MAX
-        else:
-            return PPM_MIN + (PPM_MAX - PPM_MIN) * (voltage - V_MIN) / (V_MAX - V_MIN)
-    
-    ppm1 = calculate_ppm(voltage1)
-    ppm2 = calculate_ppm(voltage2)
-    ppm3 = calculate_ppm(voltage3)
+    raw1 = adc1.read_u16()
+    raw2 = adc2.read_u16()
+    raw3 = adc3.read_u16()
+
+    v1 = adc_to_voltage(raw1)
+    v2 = adc_to_voltage(raw2)
+    v3 = adc_to_voltage(raw3)
+
+    ppm1 = calculate_ppm(v1)
+    ppm2 = calculate_ppm(v2)
+    ppm3 = calculate_ppm(v3)
+
+    print(ppm1, ppm2, ppm3)
+    sleep(1)
