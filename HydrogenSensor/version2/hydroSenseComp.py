@@ -13,7 +13,7 @@ import datetime
 
 # sets up serial on COM 3 (where the pico is, at least for testing) and at a BAUD rate of 9600
 def beginSerial():
-    ser = serial.Serial("/dev/tty.usbmodem1101", 9600, timeout = 4)
+    ser = serial.Serial("/dev/tty.usbmodem1201", 9600, timeout = 4)
     return ser
 
 
