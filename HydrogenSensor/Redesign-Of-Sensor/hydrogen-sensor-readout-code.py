@@ -1,28 +1,26 @@
 # file: hydroSenseComp.py
-# Reads serial data from Pico and logs to a timestamped CSV (macOS-friendly)
-# - Uses /dev/cu.* (recommended on macOS)
+# Reads serial data from Pico and logs to a timestamped CSV (Windows-friendly)
+# - Detects COM ports via pyserial's list_ports (Windows)
 # - Tries common baud rates (115200 then 9600)
 # - Disables the "readline waits forever" issue via timeouts
 # - Writes raw Pico line + timestamp to CSV
 
 import os
+import sys
 import csv
 import glob
 import serial
+from serial.tools import list_ports
 import datetime as dt
 from time import sleep
 
 # ---------------- CONFIG ----------------
-FOLDER_LOCATION = "/Users/moose/Documents/MSTAR_Code/MSTAR/hydrogensensor"
+# Use a raw string for Windows paths so backslashes aren't interpreted as escapes
+FOLDER_LOCATION = r"C:\Users\MSTAR\Desktop\H2 sensor test 12326"
 
-# Prefer /dev/cu.* on macOS
+# Candidate COM ports to try if list_ports finds nothing (fallback)
 CANDIDATE_PORTS = [
-    "/dev/cu.usbmodem*",
-    "/dev/cu.usbserial*",
-    "/dev/tty.usbmodem*",
-    "/dev/tty.usbserial*",
-    "COM3",
-    "COM4",
+    "COM6"
 ]
 
 # Try these baud rates (Thonny/MicroPython REPL is often 115200)
@@ -37,28 +35,40 @@ CSV_HEADER = ["timestamp", "raw"]
 # ----------------------------------------
 
 
-def find_serial_ports():
-    """Return a list of existing ports from glob patterns, de-duped."""
-    ports = []
-    for pat in CANDIDATE_PORTS:
-        if "*" in pat:
-            ports.extend(sorted(glob.glob(pat)))
-        else:
-            ports.append(pat)
+def find_serial_ports(override_port=None):
+    """Return a list of available serial ports.
 
-    # de-dup while preserving order
-    seen = set()
-    out = []
-    for p in ports:
-        if p not in seen:
-            seen.add(p)
-            out.append(p)
-    return out
+    Priority order:
+    1. If override_port is specified, use only that port.
+    2. Try CANDIDATE_PORTS first (these are preferred).
+    3. Then add any remaining detected ports from list_ports.comports().
+    Results are de-duplicated while preserving order.
+    """
+    if override_port:
+        return [override_port]
+    
+    # Get all detected ports
+    detected = []
+    try:
+        detected = [p.device for p in list_ports.comports()]
+    except Exception:
+        detected = []
+    
+    # Start with CANDIDATE_PORTS (preferred), then add any others
+    ports = list(CANDIDATE_PORTS)
+    for p in detected:
+        if p not in ports:
+            ports.append(p)
+    
+    return ports if ports else []
 
 
-def open_pico_serial():
-    """Try ports and bauds until one opens."""
-    ports = find_serial_ports()
+def open_pico_serial(override_port=None):
+    """Try ports and bauds until one opens.
+    
+    If override_port is specified, try only that port.
+    """
+    ports = find_serial_ports(override_port=override_port)
     last_err = None
 
     for port in ports:
@@ -121,7 +131,7 @@ def read_one_line(ser: serial.Serial):
     return line if line else None
 
 
-def write_row(writer: csv.writer, file_handle, raw_line: str):
+def write_row(writer, file_handle, raw_line: str):
     """Write one CSV row and flush so you don't lose data if it crashes."""
     ts = dt.datetime.now().isoformat(timespec="seconds")
     writer.writerow([ts, raw_line])
@@ -129,7 +139,29 @@ def write_row(writer: csv.writer, file_handle, raw_line: str):
 
 
 def main():
-    pico = open_pico_serial()
+    # Parse command-line arguments
+    override_port = None
+    if "--port" in sys.argv:
+        idx = sys.argv.index("--port")
+        if idx + 1 < len(sys.argv):
+            override_port = sys.argv[idx + 1]
+    
+    # Show available ports for debugging
+    print("Available COM ports:")
+    try:
+        available = list_ports.comports()
+        if available:
+            for p in available:
+                print(f"  {p.device} - {p.description}")
+        else:
+            print("  (none detected by list_ports)")
+    except Exception as e:
+        print(f"  (error querying ports: {e})")
+    
+    if override_port:
+        print(f"\nUsing specified port: {override_port}")
+    
+    pico = open_pico_serial(override_port=override_port)
     file_handle, writer = begin_file()
 
     try:
