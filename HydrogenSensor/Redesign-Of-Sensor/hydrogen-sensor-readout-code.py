@@ -29,9 +29,11 @@ CANDIDATE_BAUDS = [115200, 9600]
 TIMEOUT_S = 2
 SAMPLE_DELAY_S = 1
 
+# Data offset for calibration (adjust as needed)
+DataOffset1 = -684.7156  # Offset applied to the first sensor value
+
 # CSV columns:
-# raw = whatever the Pico printed for that line (you can parse later)
-CSV_HEADER = ["timestamp", "raw"]
+CSV_HEADER = ["timestamp", "value1", "value2", "value3"]
 # ----------------------------------------
 
 
@@ -132,9 +134,25 @@ def read_one_line(ser: serial.Serial):
 
 
 def write_row(writer, file_handle, raw_line: str):
-    """Write one CSV row and flush so you don't lose data if it crashes."""
+    """Write one CSV row and flush so you don't lose data if it crashes.
+    
+    Splits the raw_line by whitespace, applies DataOffset1 to the first value, and writes each value as a separate column.
+    """
     ts = dt.datetime.now().isoformat(timespec="seconds")
-    writer.writerow([ts, raw_line])
+    values = raw_line.split()
+    
+    # Apply DataOffset1 to the first value and convert to floats
+    adjusted_values = []
+    for i, v in enumerate(values):
+        try:
+            val = float(v)
+            if i == 0:  # Apply offset only to first value
+                val += DataOffset1
+            adjusted_values.append(val)
+        except ValueError:
+            adjusted_values.append(v)  # Keep as string if not a number
+    
+    writer.writerow([ts] + adjusted_values)
     file_handle.flush()
 
 
@@ -168,9 +186,21 @@ def main():
         while True:
             line = read_one_line(pico)
             if line is None:
-                print("[no data]")
+                print("[no data]\n")
             else:
-                print(line)
+                # Apply offset to the first value for display
+                values = line.split()
+                if values:
+                    try:
+                        adjusted_first = float(values[0]) + DataOffset1
+                        display_line = f"{adjusted_first} {' '.join(values[1:])}\n"
+                        print(f"Debug: original={values[0]}, adjusted={adjusted_first}")
+                    except ValueError:
+                        display_line = f"{line}\n"  # Fallback if not a number
+                        print("Debug: failed to parse")
+                else:
+                    display_line = f"{line}\n"
+                print(display_line)
                 write_row(writer, file_handle, line)
 
             sleep(SAMPLE_DELAY_S)
@@ -187,6 +217,10 @@ def main():
             file_handle.close()
         except Exception:
             pass
+
+
+if __name__ == "__main__":
+    main()
 
 
 if __name__ == "__main__":
