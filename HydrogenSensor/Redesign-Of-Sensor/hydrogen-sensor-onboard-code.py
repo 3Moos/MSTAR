@@ -39,4 +39,8 @@ while True:
     ppm3 = calculate_ppm(v3)
 
     print(ppm1, ppm2, ppm3)
+    print(v1, v2, v3)
+    print("          ")
+    sleep(1)
+    print(ppm1, ppm2, ppm3)
     sleep(1)
