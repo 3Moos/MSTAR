@@ -15,17 +15,17 @@ import threading
 
 timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 
-pico1 = Serial('COM15', 115200, timeout=2)
+pico1 = Serial('COM14', 115200, timeout=2)
 ##pico2 = Serial('COM18', 115200, timeout=2)
 ##pico3 = Serial('COM16', 115200, timeout=2)
 ##pico4 = Serial('COM14', 115200, timeout=2)
 picos = [pico1] ##, pico2, pico3, pico4]
 
-power1 = Serial('COM27', 115200, timeout=2)
+##power1 = Serial('COM27', 115200, timeout=2)
 ##power2 = Serial('COM28', 115200, timeout=2)
 #power3 = Serial('COM22', 115200, timeout=2)
 #power4 = Serial('COM21', 115200, timeout=2)
-powers = [power1] ##, power2, power3, power4]
+##powers = [power1] ##, power2, power3, power4]
 
 testing_temperature = str(testing_temperature) + "C"
 
@@ -51,29 +51,29 @@ board1_name = os.path.join(folder_name, board_1 + " " + timestamp + ".csv")
 ##board2_name = os.path.join(folder_name, board_2 + " " + timestamp + ".csv")
 
 name1 = os.path.join(folder_name, " temps " + timestamp + ".csv")
-name2 = os.path.join(folder_name, " power 1 " + timestamp + ".csv")
+##name2 = os.path.join(folder_name, " power 1 " + timestamp + ".csv")
 ##name3 = os.path.join(folder_name, " power 2 " + timestamp + ".csv")
 
-print(name1, "\n", name2, "\n") ##, name3, "\n")
+print(name1, "\n") ##, name2, "\n") ##, name3, "\n")
 
 print(file_name)
 
-def toggle_power():
-    power_state = False
-    while True:
-        input("Press Enter to toggle power (on/off): ")
-        power_state = not power_state
-        command = b'power_on\r\n' if power_state else b'power_off\r\n'
-        for power in powers:
-            power.write(command)
-        print("Power turned", "ON" if power_state else "OFF")
-        print(power_state, ": POWER STATE")
-        sleep(0.5)
+##def toggle_power():
+##    power_state = False
+##    while True:
+##        input("Press Enter to toggle power (on/off): ")
+##        power_state = not power_state
+##        command = b'power_on\r\n' if power_state else b'power_off\r\n'
+##        for power in powers:
+##            power.write(command)
+##        print("Power turned", "ON" if power_state else "OFF")
+##        print(power_state, ": POWER STATE")
+##        sleep(0.5)
     
 
 
 # Start the toggle_power function in a separate thread
-threading.Thread(target=toggle_power, daemon=True).start()
+###threading.Thread(target=toggle_power, daemon=True).start()
 
         #print("Temp 1-8 : " + print_data)
         
@@ -82,10 +82,10 @@ with open(name1, 'w', newline='') as csvfile:
     # Write the header to the CSV file
     csvwriter.writerow(['Timestamp', 'T1 - COM15', 'T2 - COM15', 'T3 - COM18', 'T4 - COM18', 'T5 - COM16', 'T6 - COM16', 'T7 - COM14', 'T8 - COM14'])
 
-with open(name2, 'w', newline='') as csvfile:
-    csvwriter = csv.writer(csvfile)
+###with open(name2, 'w', newline='') as csvfile:
+###    csvwriter = csv.writer(csvfile)
     # Write the header to the CSV file
-    csvwriter.writerow(['Timestamp', "mA 1", "V1", "mA 2", "V2", "mA 3", "V3", "mA 4", "V4", "mA 5", "V5", "mA 6", "V6", "mA 7", "V7", "mA 8", "V8"])
+###    csvwriter.writerow(['Timestamp', "mA 1", "V1", "mA 2", "V2", "mA 3", "V3", "mA 4", "V4", "mA 5", "V5", "mA 6", "V6", "mA 7", "V7", "mA 8", "V8"])
 
 ##with open(name3, 'w', newline='') as csvfile:
     ##csvwriter = csv.writer(csvfile)
@@ -113,16 +113,16 @@ while True:
             data += line
             counter += 1
                 
-        power1.reset_input_buffer()
-        power1.write(b'get_readings\r\n')
-        power_line1 = power1.readline()
-        power_line1 = power_line1.decode().strip()
+        ###power1.reset_input_buffer()
+        ###power1.write(b'get_readings\r\n')
+        ###power_line1 = power1.readline()
+        ###power_line1 = power_line1.decode().strip()
 
         
-        power2.reset_input_buffer()
-        power2.write(b'get_readings\r\n')
-        power_line2 = power2.readline()
-        power_line2 = power_line2.decode().strip()
+        ###power2.reset_input_buffer()
+        ###power2.write(b'get_readings\r\n')
+        ###power_line2 = power2.readline()
+        ###power_line2 = power_line2.decode().strip()
         
         with open(name1, 'a+', newline='') as csvfile:
             csvwriter = csv.writer(csvfile)
@@ -134,14 +134,14 @@ while True:
         
         #if power_line1 != "" and power_line2 != "":
             
-        with open(name2, 'a+', newline='') as csvfile:
-            csvwriter = csv.writer(csvfile)
+        ###with open(name2, 'a+', newline='') as csvfile:
+        ###    csvwriter = csv.writer(csvfile)
             # Write the timestamp and the line to the CSV file
             #timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             
-            data = power_line1.split(",")
-            data.insert(0, timestamp)
-            csvwriter.writerow(data)
+            ###data = power_line1.split(",")
+            ###data.insert(0, timestamp)
+            ###csvwriter.writerow(data)
         
       ##  with open(name3, '+a', newline='') as csvfile:
        ##     csvwriter = csv.writer(csvfile)
@@ -152,7 +152,7 @@ while True:
         ##    csvwriter.writerow(data)
     
         print("Temp 1-8 : " + print_data)
-        print("Board 1: " + power_line1)
+        ###print("Board 1: " + power_line1)
        ## print("Board 2: " + power_line2, "\n")
         #sleep(0.5) # Adjust the sleep time as needed
             
