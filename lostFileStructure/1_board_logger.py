@@ -143,17 +143,17 @@ while True:
             data.insert(0, timestamp)
             csvwriter.writerow(data)
         
-        with open(name3, '+a', newline='') as csvfile:
-            csvwriter = csv.writer(csvfile)
+      ##  with open(name3, '+a', newline='') as csvfile:
+       ##     csvwriter = csv.writer(csvfile)
             
             # Write the timestamp and the line to the CSV file
-            data = power_line2.split(",")
-            data.insert(0, timestamp)
-            csvwriter.writerow(data)
+        ##    data = power_line2.split(",")
+         ##   data.insert(0, timestamp)
+        ##    csvwriter.writerow(data)
     
         print("Temp 1-8 : " + print_data)
         print("Board 1: " + power_line1)
-        print("Board 2: " + power_line2, "\n")
+       ## print("Board 2: " + power_line2, "\n")
         #sleep(0.5) # Adjust the sleep time as needed
             
             
