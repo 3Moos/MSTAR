@@ -22,7 +22,7 @@ pico1 = Serial('COM15', 115200, timeout=2)
 picos = [pico1] ##, pico2, pico3, pico4]
 
 power1 = Serial('COM27', 115200, timeout=2)
-power2 = Serial('COM28', 115200, timeout=2)
+##power2 = Serial('COM28', 115200, timeout=2)
 #power3 = Serial('COM22', 115200, timeout=2)
 #power4 = Serial('COM21', 115200, timeout=2)
 powers = [power1] ##, power2, power3, power4]
@@ -30,7 +30,7 @@ powers = [power1] ##, power2, power3, power4]
 testing_temperature = str(testing_temperature) + "C"
 
 board_1 = "board1 - COM27"
-#board_2 = "board2 - COM28"
+##board_2 = "board2 - COM28"
 
 temp_boards = file_name + " " + testing_temperature + "Temp Boards - COM15" ##-COM18-COM16-COM14
 board_1 = board_1 + " " + testing_temperature
