@@ -15,22 +15,22 @@ import threading
 
 timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 
-pico1 = Serial('COM15', 115200, timeout=2)
-pico2 = Serial('COM18', 115200, timeout=2)
-pico3 = Serial('COM16', 115200, timeout=2)
-pico4 = Serial('COM14', 115200, timeout=2)
+pico1 = Serial('COM15', 115200, timeout=2) #Temp board #1
+pico2 = Serial('COM18', 115200, timeout=2) #Temp board #2
+pico3 = Serial('COM16', 115200, timeout=2) #Temp board #3
+pico4 = Serial('COM14', 115200, timeout=2) #Temp board #4
 picos = [pico1, pico2, pico3, pico4]
 
-power1 = Serial('COM27', 115200, timeout=2)
-power2 = Serial('COM28', 115200, timeout=2)
+power1 = Serial('COM8', 115200, timeout=2) #Power board #1
+power2 = Serial('COM9', 115200, timeout=2) #Power board #2
 #power3 = Serial('COM22', 115200, timeout=2)
 #power4 = Serial('COM21', 115200, timeout=2)
 powers = [power1, power2] #, power3, power4]
 
 testing_temperature = str(testing_temperature) + "C"
 
-board_1 = "board1 - COM27"
-board_2 = "board2 - COM28"
+board_1 = "board1 - COM8"
+board_2 = "board2 - COM9"
 
 temp_boards = file_name + " " + testing_temperature + "Temp Boards - COM15-COM18-COM16-COM14"
 board_1 = board_1 + " " + testing_temperature
@@ -80,17 +80,17 @@ threading.Thread(target=toggle_power, daemon=True).start()
 with open(name1, 'w', newline='') as csvfile:
     csvwriter = csv.writer(csvfile)
     # Write the header to the CSV file
-    csvwriter.writerow(['Timestamp', 'T1 - COM15', 'T2 - COM15', 'T3 - COM18', 'T4 - COM18', 'T5 - COM16', 'T6 - COM16', 'T7 - COM14', 'T8 - COM14'])
+    csvwriter.writerow(['Timestamp', 'T1 - COM15', 'T2 - COM15', 'T3 - COM18', 'T4 - COM18', 'T5 - COM16', 'T6 - COM16', 'T7 - COM14', 'T8 - COM14']) #Writes the header row for temp
 
 with open(name2, 'w', newline='') as csvfile:
     csvwriter = csv.writer(csvfile)
     # Write the header to the CSV file
-    csvwriter.writerow(['Timestamp', "mA 1", "V1", "mA 2", "V2", "mA 3", "V3", "mA 4", "V4", "mA 5", "V5", "mA 6", "V6", "mA 7", "V7", "mA 8", "V8"])
+    csvwriter.writerow(['Timestamp', "mA 1", "V1", "mA 2", "V2", "mA 3", "V3", "mA 4", "V4", "mA 5", "V5", "mA 6", "V6", "mA 7", "V7", "mA 8", "V8"]) #Writes the header row for power 1
 
 with open(name3, 'w', newline='') as csvfile:
     csvwriter = csv.writer(csvfile)
     # Write the header to the CSV file
-    csvwriter.writerow(['Timestamp', "mA 1", "V1", "mA 2", "V2", "mA 3", "V3", "mA 4", "V4", "mA 5", "V5", "mA 6", "V6", "mA 7", "V7", "mA 8", "V8"])
+    csvwriter.writerow(['Timestamp', "mA 1", "V1", "mA 2", "V2", "mA 3", "V3", "mA 4", "V4", "mA 5", "V5", "mA 6", "V6", "mA 7", "V7", "mA 8", "V8"]) #Writes the header row for power 2
 
 while True:
     try:
