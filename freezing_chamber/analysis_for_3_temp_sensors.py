@@ -18,11 +18,7 @@ experiment_name = "x57-x60" #CHANGE THIS TO MATCH EXPERIMENT, USED IN OUTPUT FIL
 
 timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 
-#base_dir = '/Users/moose/Documents/MSTAR_Code/MSTAR/freezing_chamber/freezing_data/NaCaMg_15%_10%/Freezing_Logs/logs 09-12-2025-Fri 10-11-29-AM'
-#df_p1 = pd.read_csv(f"{base_dir}/ (DO NOT USE! Was just copying power 2 data)power 1 09-12-2025-Fri 10-11-29-AM.csvv")
-#df_p2 = pd.read_csv(f"{base_dir}/ power_2_09-12-2025-Fri 10-11-29-AM.csv")
-#df_t1 = pd.read_csv(f"{base_dir}/ temps-09-12-2025-Fri 10-11-29-AM.csv")
-df_p1 = pd.DataFrame() #the fuck
+df_p1 = pd.DataFrame()
 df_p2 = pd.DataFrame()
 df_t1 = pd.DataFrame()
 
@@ -80,10 +76,15 @@ except Exception as e:
 finally:
     print("✅ Loaded dataframes (check for errors above)")
 
+#End of the file loading coke
+
+
+
 df_p1 = df_p1.add_suffix("_p1")
 df_p2 = df_p2.add_suffix("_p2")
 df_t1 = df_t1.add_suffix("_t1")
 
+#Drop the timestamps from t1 and p2 and just use the timestamp from p1 to avoid duplicate timestamp columns when concatenating later. This is because the timestamps should be the same across all files, so we only need one.
 if 'Timestamp_p2' in df_p2.columns:
     df_p2 = df_p2.drop('Timestamp_p2', axis=1)
 if 'Timestamp_t1' in df_t1.columns:
@@ -226,15 +227,17 @@ df_p2 = df_p2.rename(columns={
 }
                      )
 
+   # Don't think to hard about the actual names here, just make sure the match the column headers on the temp file.
+   # these lines just say take the columns from df_t1 and rename the column in quotes to another name in quotes
 df_t1 = df_t1.rename(columns={
-    f"T1 - COM_t1" : f"{ts1}",
-    f"T2 - COM_t1" : f"{ts2}",
-    f"T3 - COM_t1" : f"{ts3}",
-    f"T4 - COM_t1" : f"{ts4}",
-    f"T5 - COM_t1" : f"{ts5}",
-    f"T6 - COM_t1" : f"{ts6}",
-    #f"T7 - COM_t1" : f"{ts7}",
-    #f"T8 - COM_t1" : f"{ts8}"
+    f"T1 - COM14" : f"{ts1}",
+    f"T2 - COM4" : f"{ts2}",
+    f"T3 - COM6" : f"{ts3}",
+    f"T4 - COMM18" : f"{ts4}",
+    f"T5 - COMM16" : f"{ts5}",
+    f"T6 - COMM16" : f"{ts6}",
+    #f"T7 - COMM14" : f"{ts7}",
+    #f"T8 - COMM14" : f"{ts8}"
 }
                      )
 
@@ -248,7 +251,6 @@ df_t1[num_cols_t1] = df_t1[num_cols_t1].apply(pd.to_numeric, errors="coerce")
 
 
 #Extrapolated Temp Data
-#Vibe Start
 
 # Define which cell temperatures to average together at each timestamp
 # Keys = new averaged column names
@@ -267,12 +269,12 @@ average_map = { #HARDCODED, CHANGE TO MATCH EXPERIMENT
     f"{c11conc} Cell 11 Temp": [ts4, ts2],
     f"{c12conc} Cell 12 Temp": [ts2],
     f"{c13conc} Cell 13 Temp": [ts5, ],
-    f"{c14conc} Cell 14 Temp": [],
-    f"{c15conc} Cell 15 Temp": [],
-    f"{c16conc} Cell 16 Temp": []
+    f"{c14conc} Cell 14 Temp": [ts1],
+    f"{c15conc} Cell 15 Temp": [ts1],
+    f"{c16conc} Cell 16 Temp": [ts1]
     }
 
-# Create df_t2 with timestamps
+# Create df_t2 with timestamps, so empty dataframe with just the timestamp column to start, then we will add the extrapolated temp columns to it
 df_t2 = pd.DataFrame()
 df_t2["Timestamp"] = df_p1["Timestamp"]
 
@@ -285,7 +287,7 @@ for avg_name, cols in average_map.items():
         continue
     df_t2[avg_name] = df_t1[valid_cols].mean(axis=1, skipna=True)
 
-# Optional: round for readability
+# round for readability
 df_t2 = df_t2.round(3)
 
 # Save output
