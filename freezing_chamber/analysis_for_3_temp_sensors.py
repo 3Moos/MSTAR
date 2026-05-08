@@ -230,14 +230,14 @@ df_p2 = df_p2.rename(columns={
    # Don't think to hard about the actual names here, just make sure the match the column headers on the temp file.
    # these lines just say take the columns from df_t1 and rename the column in quotes to another name in quotes
 df_t1 = df_t1.rename(columns={
-    f"T1 - COM14" : f"{ts1}",
-    f"T2 - COM4" : f"{ts2}",
-    f"T3 - COM6" : f"{ts3}",
-    f"T4 - COMM18" : f"{ts4}",
-    f"T5 - COMM16" : f"{ts5}",
-    f"T6 - COMM16" : f"{ts6}",
-    #f"T7 - COMM14" : f"{ts7}",
-    #f"T8 - COMM14" : f"{ts8}"
+    f"T1 - COM14_t1" : f"{ts1}",
+    f"T2 - COM4_t1" : f"{ts2}",
+    f"T3 - COM6_t1" : f"{ts3}",
+    f"T4 - COMM18_t1" : f"{ts4}",
+    f"T5 - COMM16_t1" : f"{ts5}",
+    f"T6 - COMM16_t1" : f"{ts6}",
+    #f"T7 - COMM14_t1" : f"{ts7}",
+    #f"T8 - COMM14_t1" : f"{ts8}"
 }
                      )
 
@@ -249,7 +249,7 @@ df_p2[num_cols_p2] = df_p2[num_cols_p2].apply(pd.to_numeric, errors="coerce")
 num_cols_t1 = df_t1.columns.difference(['Timestamp_t1'])
 df_t1[num_cols_t1] = df_t1[num_cols_t1].apply(pd.to_numeric, errors="coerce")
 
-
+print("Columns in df_t1:", df_t1.columns.tolist())
 #Extrapolated Temp Data
 
 # Define which cell temperatures to average together at each timestamp
@@ -268,7 +268,7 @@ average_map = { #HARDCODED, CHANGE TO MATCH EXPERIMENT
     f"{c10conc} Cell 10 Temp": [ts4],
     f"{c11conc} Cell 11 Temp": [ts4, ts2],
     f"{c12conc} Cell 12 Temp": [ts2],
-    f"{c13conc} Cell 13 Temp": [ts5, ],
+    f"{c13conc} Cell 13 Temp": [ts5],
     f"{c14conc} Cell 14 Temp": [ts1],
     f"{c15conc} Cell 15 Temp": [ts1],
     f"{c16conc} Cell 16 Temp": [ts1]
