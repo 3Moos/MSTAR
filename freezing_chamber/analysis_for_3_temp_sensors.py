@@ -13,7 +13,8 @@ from datetime import datetime
 #Also Change the Hardcoded order list to match the actual sensor to cell used in the experiment
 #Make sure to chamge the hardcoded experiment name in variable below
 #32 #CHNAGE THESE VARIABLES TO MAGTCH CELL CONC
-experiment_name = "canamg-60pct-55pct-45pct-40pct-11072025"
+
+experiment_name = "x57-x60" #CHANGE THIS TO MATCH EXPERIMENT, USED IN OUTPUT FILE NAMES
 
 timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 
@@ -28,12 +29,36 @@ df_t1 = pd.DataFrame()
 # Hardcoded folder path (change this to match your experiment folder)
 folder_path = "/Users/moose/Desktop/MSTAR/freezing_chamber/freezing_data/x57-60"
 
-# Get list of files in the folder
-files = os.listdir(folder_path)
+if not os.path.isdir(folder_path):
+    raise FileNotFoundError(f"Folder not found: {folder_path}")
 
-power1_file = next((f for f in files if (("power_1" in f) or ("power 1" in f)) and f.endswith('.csv')), None)
-power2_file = next((f for f in files if (("power_2" in f) or ("power 2" in f)) and f.endswith('.csv')), None)
-temp_file = next((f for f in files if (("temps" in f) or ("temp" in f)) and f.endswith('.csv')), None)
+files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+
+power1_file = next(
+    (f for f in files
+     if any(sub in f.lower() for sub in ("power_1", "power 1")) and f.lower().endswith(".csv")),
+    None
+)
+power2_file = next(
+    (f for f in files
+     if any(sub in f.lower() for sub in ("power_2", "power 2")) and f.lower().endswith(".csv")),
+    None
+)
+temp_file = next(
+    (f for f in files
+     if any(sub in f.lower() for sub in ("temps", "temp")) and f.lower().endswith(".csv")),
+    None
+)
+
+if not (power1_file and power2_file and temp_file):
+    missing = []
+    if not power1_file:
+        missing.append("power 1")
+    if not power2_file:
+        missing.append("power 2")
+    if not temp_file:
+        missing.append("temp")
+    raise FileNotFoundError(f"Missing file(s) in {folder_path}: {', '.join(missing)}")
 
 try:
     if power1_file:
@@ -59,8 +84,10 @@ df_p1 = df_p1.add_suffix("_p1")
 df_p2 = df_p2.add_suffix("_p2")
 df_t1 = df_t1.add_suffix("_t1")
 
-df_p2 = df_p2.drop('Timestamp_p2', axis=1)
-df_t1 = df_t1.drop('Timestamp_t1', axis=1)
+if 'Timestamp_p2' in df_p2.columns:
+    df_p2 = df_p2.drop('Timestamp_p2', axis=1)
+if 'Timestamp_t1' in df_t1.columns:
+    df_t1 = df_t1.drop('Timestamp_t1', axis=1)
 
 #CHNAGE THESE VARIABLES TO MAGTCH CELL CONC
 c1conc = "x57"
@@ -77,7 +104,7 @@ c11conc = "x59"
 c12conc = "x59"
 c13conc = "x60"
 c14conc = "x60"
-c15conc = "60"
+c15conc = "x60"
 c16conc = "x60"
 
 c1voltage = f'{c1conc} Cell 1 Voltage'
@@ -114,30 +141,29 @@ c14current = f'{c14conc} Cell 14 Current'
 c15current = f'{c15conc} Cell 15 Current'
 c16current = f'{c16conc} Cell 16 Current'
 
-ts1 = f'{c2conc} Cell 2 Temp'
+ts1 = f'{c1conc} Cell 1 Temp'
 ts2 = f'{c4conc} Cell 4 Temp'
-ts3 = f'{c6conc} Cell 6 Temp'
-ts4 = f'{c8conc} Cell 8 Temp'
-ts5 = f'{c9conc} Cell 9 Temp'
-ts6 = f'{c11conc} Cell 11 Temp'
-ts7 = f'{c13conc} Cell 13 Temp'
-ts8 = f'{c15conc} Cell 15 Temp'
+ts3 = f'{c7conc} Cell 7 Temp'
+ts4 = f'{c10conc} Cell 10 Temp'
+ts5 = f'{c14conc} Cell 14 Temp'
+ts6 = f'{c16conc} Cell 16 Temp'
+
 
 c1temp = f'{c1conc} Cell 1 Temp'
-c2temp = ts1
+c2temp = f'{c2conc} Cell 2 Temp'
 c3temp = f'{c3conc} Cell 3 Temp'
-c4temp = ts2
+c4temp = f'{c4conc} Cell 4 Temp'
 c5temp = f'{c5conc} Cell 5 Temp'
-c6temp = ts3
+c6temp = f'{c6conc} Cell 6 Temp'
 c7temp = f'{c7conc} Cell 7 Temp'
-c8temp = ts4
-c9temp = ts5
+c8temp = f'{c8conc} Cell 8 Temp'
+c9temp = f'{c9conc} Cell 9 Temp'
 c10temp = f'{c10conc} Cell 10 Temp'
-c11temp = ts6
+c11temp = f'{c11conc} Cell 11 Temp'
 c12temp = f'{c12conc} Cell 12 Temp'
-c13temp = ts7
+c13temp = f'{c13conc} Cell 13 Temp'
 c14temp = f'{c14conc} Cell 14 Temp'
-c15temp = ts8
+c15temp = f'{c15conc} Cell 15 Temp'
 c16temp = f'{c16conc} Cell 16 Temp'
 
 c1resistance = f'{c1conc} Cell 1 Resistance'
@@ -228,15 +254,23 @@ df_t1[num_cols_t1] = df_t1[num_cols_t1].apply(pd.to_numeric, errors="coerce")
 # Keys = new averaged column names
 # Values = list of temperature columns in df_t1 to average
 average_map = { #HARDCODED, CHANGE TO MATCH EXPERIMENT
-    f"{c1conc} Cell 1 Temp": [ts1, ts5],
-    f"{c3conc} Cell 3 Temp": [ts1, ts2, ts6],
-    f"{c5conc} Cell 5 Temp": [ts2, ts3, ts7],
-    f"{c7conc} Cell 7 Temp": [ts3, ts4, ts8],
-    f"{c10conc} Cell 10 Temp": [ts5, ts6, ts1],
-    f"{c12conc} Cell 12 Temp": [ts6, ts7, ts2],
-    #f"{c14conc} Cell 14 Temp": [ts7, ts8, ts3],
-    #f"{c16conc} Cell 16 Temp": [ts8, ts4]
-}
+    f"{c1conc} Cell 1 Temp": [ts1],
+    f"{c2conc} Cell 2 Temp": [ts1, ts4,],
+    f"{c3conc} Cell 3 Temp": [ts2, ts4],
+    f"{c4conc} Cell 4 Temp": [ts2],
+    f"{c5conc} Cell 5 Temp": [ts2, ts5],
+    f"{c6conc} Cell 6 Temp": [ts5, ts3],
+    f"{c7conc} Cell 7 Temp": [ts3],
+    f"{c8conc} Cell 8 Temp": [ts3, ts6],
+    f"{c9conc} Cell 9 Temp": [ts1, ts4],
+    f"{c10conc} Cell 10 Temp": [ts4],
+    f"{c11conc} Cell 11 Temp": [ts4, ts2],
+    f"{c12conc} Cell 12 Temp": [ts2],
+    f"{c13conc} Cell 13 Temp": [ts5, ],
+    f"{c14conc} Cell 14 Temp": [],
+    f"{c15conc} Cell 15 Temp": [],
+    f"{c16conc} Cell 16 Temp": []
+    }
 
 # Create df_t2 with timestamps
 df_t2 = pd.DataFrame()
@@ -247,6 +281,7 @@ for avg_name, cols in average_map.items():
     valid_cols = [c for c in cols if c in df_t1.columns]
     if not valid_cols:
         print(f"[WARNING] Skipping {avg_name} (no valid columns found)")
+        df_t2[avg_name] = np.nan
         continue
     df_t2[avg_name] = df_t1[valid_cols].mean(axis=1, skipna=True)
 
@@ -286,7 +321,7 @@ power_data_p2 = df_p2[df_p2[voltage_cols_p2].ge(5).all(axis=1)]
 #temp
 
 
-temp_data_t1 = df_t1[(df_t1[ts1] < 33)]  #HARDCODED VALUE, CHANGE TO MATCH EXPERIMENT
+temp_data_t1 = df_t1[df_t1[ts1] < 33] if ts1 in df_t1.columns else df_t1.copy()  #HARDCODED VALUE, CHANGE TO MATCH EXPERIMENT
 # Filter df_t2 by temperature but drop its Timestamp column to avoid duplicate Timestamp columns when concatenating
 if 'Timestamp' in df_t2.columns:
     temp_data_t2 = df_t2[df_t2[f"{c1conc} Cell 1 Temp"] < 33].drop(columns=['Timestamp'])
@@ -304,82 +339,27 @@ for i in range(1, 17):
         # Calculate resistance: (V/I) * volume_correction
         combined_data[resistance_col] = (combined_data[voltage_col] / (combined_data[current_col] / 1000)) * 0.00125
 
-order = [ #HARDCODED, CHANGE TO MATCH EXPERIMENT
-    'Timestamp',
-    c1current,
-    c1voltage,
-    c1resistance,
-    c1temp,
-    c2current,
-    c2voltage,
-    c2resistance,
-    c2temp,
-    c3current,
-    c3voltage,
-    c3resistance,
-    c3temp,
-    c4current,
-    c4voltage,
-    c4resistance,
-    c4temp,
-    c5current,
-    c5voltage,
-    c5resistance,
-    c5temp,
-    c6current,
-    c6voltage,
-    c6resistance,
-    c6temp,
-    c7current,
-    c7voltage,
-    c7resistance,
-    c7temp,
-    c8current,
-    c8voltage,
-    c8resistance,
-    c8temp,
-    c9current,
-    c9voltage,
-    c9resistance,
-    c9temp,
-    c10current,
-    c10voltage,
-    c10resistance,
-    c10temp,
-    c11current,
-    c11voltage,
-    c11resistance,
-    c11temp,
-    c12current,
-    c12voltage,
-    c12resistance,
-    c12temp,
-    c13current,
-    c13voltage,
-    c13resistance,
-    c13temp,
-    c14current,
-    c14voltage,
-    c14resistance,
-    c14temp,
-    c15current,
-    c15voltage,
-    c15resistance,
-    c15temp,
-    c16current,
-    c16voltage,
-    c16resistance,
-    c16temp
-]
+order = ['Timestamp']
+for i in range(1, 17):
+    for col_name in (
+        globals()[f'c{i}current'],
+        globals()[f'c{i}voltage'],
+        globals()[f'c{i}resistance'],
+        globals()[f'c{i}temp'],
+    ):
+        if col_name in combined_data.columns:
+            order.append(col_name)
 
 combined_data_ordered = combined_data[order]
 
-combined_data_ordered.to_csv(f'{experiment_name}combined_data_{timestamp}.csv', index=False)
+combined_data_ordered.to_csv(f'{experiment_name}_combined_data_{timestamp}.csv', index=False)
 
-#combined_data.to_csv(f'combined_data.csv_{timestamp}', index=False) #index=False removes the labing index that is to the left of the data by default e.g. 1,2,3,4,5,6,7,...,n
+if c9voltage in combined_data_ordered.columns:
+    power_on_data = combined_data_ordered[combined_data_ordered[c9voltage] > 5]
+else:
+    power_on_data = combined_data_ordered.copy()
 
-power_on_data = combined_data_ordered[(combined_data_ordered[c9voltage] > 5)]
-power_on_data.to_csv(f'{experiment_name}power_on_data_{timestamp}.csv', index=False)
+power_on_data.to_csv(f'{experiment_name}_power_on_data_{timestamp}.csv', index=False)
 
 #Everything above this line organaizes the data and filters it based on the conditions set
 #Everything below this line is for analysis of the data
