@@ -14,7 +14,7 @@ from datetime import datetime
 #Make sure to chamge the hardcoded experiment name in variable below
 #32 #CHNAGE THESE VARIABLES TO MAGTCH CELL CONC
 
-experiment_name = "x57-x60" #CHANGE THIS TO MATCH EXPERIMENT, USED IN OUTPUT FILE NAMES
+experiment_name = "x61-x64" #CHANGE THIS TO MATCH EXPERIMENT, USED IN OUTPUT FILE NAMES
 
 timestamp = datetime.now().strftime('%m-%d-%Y-%a %H-%M-%S-%p')
 
@@ -23,7 +23,7 @@ df_p2 = pd.DataFrame()
 df_t1 = pd.DataFrame()
 
 # Hardcoded folder path (change this to match your experiment folder)
-folder_path = "/Users/moose/Desktop/MSTAR/freezing_chamber/freezing_data/x57-60"
+folder_path = "/Users/moose/Desktop/MSTAR/freezing_chamber/freezing_data/x61-x64"
 
 if not os.path.isdir(folder_path):
     raise FileNotFoundError(f"Folder not found: {folder_path}")
@@ -91,22 +91,22 @@ if 'Timestamp_t1' in df_t1.columns:
     df_t1 = df_t1.drop('Timestamp_t1', axis=1)
 
 #CHNAGE THESE VARIABLES TO MAGTCH CELL CONC
-c1conc = "x57"
-c2conc = "x57"
-c3conc = "x57"
-c4conc = "x57"
-c5conc = "x58"
-c6conc = "x58"
-c7conc = "x58"
-c8conc = "x58"
-c9conc = "x59"
-c10conc = "x59"
-c11conc = "x59"
-c12conc = "x59"
-c13conc = "x60"
-c14conc = "x60"
-c15conc = "x60"
-c16conc = "x60"
+c1conc = "x61"
+c2conc = "x61"
+c3conc = "x61"
+c4conc = "x61"
+c5conc = "x62"
+c6conc = "x62"
+c7conc = "x62"
+c8conc = "x62"
+c9conc = "x63"
+c10conc = "x63"
+c11conc = "x63"
+c12conc = "x63"
+c13conc = "x64"
+c14conc = "x64"
+c15conc = "x64"
+c16conc = "x64"
 
 c1voltage = f'{c1conc} Cell 1 Voltage'
 c2voltage = f'{c2conc} Cell 2 Voltage'
@@ -268,10 +268,10 @@ average_map = { #HARDCODED, CHANGE TO MATCH EXPERIMENT
     f"{c10conc} Cell 10 Temp": [ts4],
     f"{c11conc} Cell 11 Temp": [ts4, ts2],
     f"{c12conc} Cell 12 Temp": [ts2],
-    f"{c13conc} Cell 13 Temp": [ts5],
-    f"{c14conc} Cell 14 Temp": [ts1],
-    f"{c15conc} Cell 15 Temp": [ts1],
-    f"{c16conc} Cell 16 Temp": [ts1]
+    f"{c13conc} Cell 13 Temp": [ts5, ts2],
+    f"{c14conc} Cell 14 Temp": [ts5],
+    f"{c15conc} Cell 15 Temp": [ts3, ts5, ts6],
+    f"{c16conc} Cell 16 Temp": [ts6]
     }
 
 # Create df_t2 with timestamps, so empty dataframe with just the timestamp column to start, then we will add the extrapolated temp columns to it
